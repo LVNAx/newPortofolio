@@ -1,0 +1,249 @@
+/* =====================================================================
+   Cosmos section — plain CSS for the bits Tailwind utilities can't express
+   (per-frame positioned overlays, SVG glyph strokes, keyframes).
+   Hex fallbacks everywhere: Tailwind v4 only emits tokens that are used.
+   ===================================================================== */
+
+.cosmos-stage {
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- constellation labels (positioned by the scene each frame) ---------- */
+.cosmos-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.2rem 0.55rem 0.2rem 0.35rem;
+  border-radius: 999px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.55);
+  will-change: transform, opacity;
+  transition:
+    color 0.4s ease,
+    background-color 0.4s ease,
+    border-color 0.4s ease;
+  border: 1px solid transparent;
+}
+.cosmos-label__idx {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.6rem;
+  height: 1.1rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.08);
+  color: rgb(255 255 255 / 0.6);
+  letter-spacing: 0.08em;
+  font-size: 9.5px;
+}
+.cosmos-label[data-active="true"] {
+  color: #fff4d6;
+  background: rgb(11 16 45 / 0.55);
+  border-color: rgb(245 192 74 / 0.35);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.cosmos-label[data-active="true"] .cosmos-label__idx {
+  background: #f5c04a;
+  color: #0b102d;
+}
+
+/* ---------- reticle (lock-on brackets) ---------- */
+.cosmos-reticle {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+.cosmos-reticle [data-corner] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  will-change: transform;
+}
+.cosmos-reticle [data-corner]::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-color: rgb(245 192 74 / 0.85);
+  border-style: solid;
+  border-width: 0;
+}
+.cosmos-reticle [data-corner="tl"]::before {
+  left: 0;
+  top: 0;
+  border-left-width: 1.5px;
+  border-top-width: 1.5px;
+}
+.cosmos-reticle [data-corner="tr"]::before {
+  right: 0;
+  top: 0;
+  border-right-width: 1.5px;
+  border-top-width: 1.5px;
+}
+.cosmos-reticle [data-corner="bl"]::before {
+  left: 0;
+  bottom: 0;
+  border-left-width: 1.5px;
+  border-bottom-width: 1.5px;
+}
+.cosmos-reticle [data-corner="br"]::before {
+  right: 0;
+  bottom: 0;
+  border-right-width: 1.5px;
+  border-bottom-width: 1.5px;
+}
+.cosmos-reticle [data-tag] {
+  position: absolute;
+  left: 0;
+  bottom: 8px;
+  white-space: nowrap;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: #f5c04a;
+}
+.cosmos-reticle [data-tag]::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  border-radius: 999px;
+  background: #f5c04a;
+  box-shadow: 0 0 10px #f5c04a;
+  vertical-align: 1px;
+  animation: cosmos-blink 1.4s steps(2, jump-none) infinite;
+}
+
+/* ---------- SVG constellation glyph ---------- */
+.cosmos-glyph__lines line {
+  stroke: currentColor;
+  stroke-opacity: 0.55;
+}
+.cosmos-glyph__stars circle {
+  fill: currentColor;
+}
+.cosmos-glyph--gold {
+  color: #f5c04a;
+}
+.cosmos-glyph--gold .cosmos-glyph__stars circle {
+  fill: #fff4d6;
+}
+.cosmos-glyph--cool {
+  color: #a9c6ff;
+}
+.cosmos-glyph--muted {
+  color: rgb(255 255 255 / 0.45);
+}
+.cosmos-glyph--draw .cosmos-glyph__lines line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: cosmos-draw 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.cosmos-glyph--draw .cosmos-glyph__stars circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cosmos-pop 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ---------- drag hint ---------- */
+.cosmos-hint-hand {
+  animation: cosmos-swipe 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+.cosmos-hint-track::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, rgb(245 192 74 / 0.6), transparent);
+  animation: cosmos-sweep 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+/* ---------- legend scroller ---------- */
+.cosmos-legend-scroll {
+  scrollbar-width: none;
+}
+.cosmos-legend-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---------- live dot ---------- */
+.cosmos-live {
+  animation: cosmos-blink 1.6s steps(2, jump-none) infinite;
+}
+
+@keyframes cosmos-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes cosmos-pop {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes cosmos-swipe {
+  0%,
+  100% {
+    transform: translateX(-10px) rotate(-8deg);
+  }
+  50% {
+    transform: translateX(10px) rotate(8deg);
+  }
+}
+@keyframes cosmos-sweep {
+  0%,
+  100% {
+    transform: translateX(-40%);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateX(40%);
+    opacity: 1;
+  }
+}
+@keyframes cosmos-blink {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.25;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cosmos-glyph--draw .cosmos-glyph__lines line,
+  .cosmos-glyph--draw .cosmos-glyph__stars circle {
+    animation: none;
+    stroke-dashoffset: 0;
+    transform: none;
+    opacity: 1;
+  }
+  .cosmos-hint-hand,
+  .cosmos-hint-track::after,
+  .cosmos-reticle [data-tag]::before,
+  .cosmos-live {
+    animation: none;
+  }
+}

@@ -1,0 +1,159 @@
+/* Hero-only motion. Everything degrades to a static frame under prefers-reduced-motion. */
+
+.hero-rise {
+  animation: hero-rise 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* Letter mask for the big first name ("g" descender kept inside the mask). */
+.hero-mask {
+  display: inline-flex;
+  overflow: hidden;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+.hero-letter {
+  display: inline-block;
+  animation: hero-letter 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes hero-letter {
+  from {
+    transform: translate3d(0, 105%, 0) rotate(6deg);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* Cyan "neuron" full stop after the first name. */
+.hero-node {
+  display: inline-block;
+  width: 0.16em;
+  height: 0.16em;
+  margin-left: 0.06em;
+  border-radius: 9999px;
+  background: var(--color-accent-cyan);
+  box-shadow:
+    0 0 0.18em rgba(94, 230, 255, 0.9),
+    0 0 0.6em rgba(94, 230, 255, 0.45);
+  animation: hero-node 2.6s ease-in-out infinite;
+}
+
+@keyframes hero-node {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.7);
+    opacity: 0.65;
+  }
+}
+
+/* Typewriter caret */
+.hero-caret {
+  display: inline-block;
+  width: 0.09em;
+  height: 0.95em;
+  margin-left: 0.08em;
+  vertical-align: -0.12em;
+  border-radius: 2px;
+  background: var(--color-accent-cyan);
+  box-shadow: 0 0 12px rgba(94, 230, 255, 0.7);
+  animation: hero-caret 1s steps(1) infinite;
+}
+
+@keyframes hero-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+.hero-typer-text {
+  background: linear-gradient(90deg, var(--color-accent-cyan), var(--color-accent-sky) 60%, var(--color-primary-vivid));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Primary CTA shine sweep */
+.hero-cta {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 20%, rgba(255, 255, 255, 0.35) 45%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-cta:hover::after,
+.hero-cta:focus-visible::after {
+  transform: translateX(120%);
+}
+
+/* Scroll cue: a light dot running down a line */
+.hero-scroll-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-scroll-line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -40%;
+  width: 100%;
+  height: 40%;
+  background: linear-gradient(to bottom, transparent, var(--color-accent-cyan));
+  animation: hero-scroll 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes hero-scroll {
+  to {
+    top: 110%;
+  }
+}
+
+/* Floating cursor label */
+.hero-label {
+  transition:
+    opacity 0.25s ease,
+    visibility 0.25s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-rise,
+  .hero-letter,
+  .hero-node,
+  .hero-caret,
+  .hero-scroll-line::after {
+    animation: none !important;
+  }
+  .hero-cta::after {
+    transition: none;
+  }
+}

@@ -1,0 +1,147 @@
+/* AI Lab — section-local styles. All classes are prefixed `nk-` to avoid
+   collisions with other sections (imported as a global stylesheet). */
+
+/* ---------- infinite marquee ---------- */
+.nk-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+.nk-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: nk-marquee var(--nk-dur, 60s) linear infinite;
+}
+.nk-marquee-track[data-reverse="true"] {
+  animation-direction: reverse;
+}
+.nk-marquee:hover .nk-marquee-track {
+  animation-play-state: paused;
+}
+@keyframes nk-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* ---------- agent loop ---------- */
+.nk-spin {
+  transform-box: view-box;
+  animation: nk-spin 40s linear infinite;
+}
+.nk-spin-rev {
+  transform-box: view-box;
+  animation: nk-spin 26s linear infinite reverse;
+}
+@keyframes nk-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.nk-halo {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: nk-halo 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+@keyframes nk-halo {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+.nk-fade-up {
+  animation: nk-fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes nk-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.nk-progress {
+  transform-origin: left center;
+  animation: nk-progress var(--nk-step, 2600ms) linear both;
+}
+.nk-progress[data-paused="true"] {
+  animation-play-state: paused;
+}
+@keyframes nk-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ---------- caret ---------- */
+.nk-caret {
+  animation: nk-caret 1s steps(1, end) infinite;
+}
+@keyframes nk-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ---------- skill cards: neural pattern ---------- */
+.nk-net-line {
+  stroke-dasharray: 3 7;
+  animation: nk-dash 1.4s linear infinite;
+  animation-play-state: paused;
+}
+.group:hover .nk-net-line,
+.group:focus-within .nk-net-line {
+  animation-play-state: running;
+}
+@keyframes nk-dash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+.nk-net-node {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.group:hover .nk-net-node {
+  transform: scale(1.5);
+}
+
+/* spotlight that follows the pointer (vars set from JS) */
+.nk-spotlight {
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 0%),
+    rgba(94, 230, 255, 0.13),
+    transparent 45%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nk-marquee-track,
+  .nk-spin,
+  .nk-spin-rev,
+  .nk-halo,
+  .nk-fade-up,
+  .nk-caret,
+  .nk-net-line {
+    animation: none !important;
+  }
+  .nk-progress {
+    display: none;
+  }
+  .nk-net-node {
+    transition: none;
+  }
+}
