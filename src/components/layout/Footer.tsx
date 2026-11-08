@@ -69,7 +69,7 @@ export default function Footer() {
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
           <div className="sm:col-span-2 lg:col-span-5">
             <a href="#top" className="group inline-flex items-center gap-3" aria-label={`${profile.short} — back to top`}>
-              <Monogram tone="dark" className="h-8 w-auto" />
+              <Monogram tone="dark" className="h-10 w-10" />
               <span className="text-[19px] font-extrabold tracking-tight">{profile.short}</span>
             </a>
             <p className="mt-6 max-w-[34ch] text-[clamp(1.25rem,2.4vw,1.6rem)] font-bold leading-snug tracking-tight text-white">

@@ -253,7 +253,7 @@ export default function Navbar() {
                 if (open) onMenuLink(e, "#top");
               }}
             >
-              <Monogram tone={dark ? "dark" : "light"} className="h-[22px] w-auto sm:h-6" />
+              <Monogram tone={dark ? "dark" : "light"} className="h-7 w-7 sm:h-8 sm:w-8" />
               <span className="text-[15px] font-extrabold leading-none tracking-tight">{profile.short}</span>
             </a>
 
