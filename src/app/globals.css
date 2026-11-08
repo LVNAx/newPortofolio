@@ -138,9 +138,24 @@
   }
 }
 
+@theme {
+  /* Smaller glass blur radii: backdrop-filter cost grows with the radius, and
+     most glass sits over live WebGL/canvas layers. Visually near-identical. */
+  --blur-md: 8px;
+  --blur-xl: 14px;
+}
+
 @theme inline {
   --font-sans: var(--font-jakarta), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-mono-jb), "JetBrains Mono", ui-monospace, monospace;
+  /* "mono" is the label voice: same family as the display face, set small with
+     tabular figures — no faux-terminal monospace. Real code uses font-code. */
+  --font-mono: var(--font-jakarta), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-code: var(--font-mono-jb), "JetBrains Mono", ui-monospace, monospace;
+}
+
+.font-mono {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
 /* ---------- Custom utilities ---------- */

@@ -83,11 +83,7 @@ export default function SkillCards() {
                 className="absolute right-0 top-0 opacity-90 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-125"
               />
 
-              <div className="relative flex items-baseline gap-2 font-mono text-[12px]">
-                <span className="text-accent-cyan">{String(i + 1).padStart(2, "0")}</span>
-                <span className="text-white/25">/ {String(skillGroups.length).padStart(2, "0")}</span>
-              </div>
-              <h4 id={`skill-${i}`} className="relative mt-8 text-[22px] font-bold leading-tight tracking-tight text-white sm:text-[24px]">
+              <h4 id={`skill-${i}`} className="relative pr-10 text-[22px] font-bold leading-tight tracking-tight text-white sm:text-[24px]">
                 {g.title}
               </h4>
               <p className="relative mt-2.5 text-[14.5px] leading-relaxed text-white/60">{g.blurb}</p>
@@ -95,7 +91,7 @@ export default function SkillCards() {
                 {g.items.map((it) => (
                   <li
                     key={it}
-                    className="rounded-full border border-white/10 bg-navy-900/60 px-2.5 py-1 font-mono text-[11px] text-white/75 transition-colors duration-300 group-hover:border-accent-cyan/25"
+                    className="rounded-full border border-white/10 bg-navy-900/60 px-2.5 py-1 text-[12px] font-medium text-white/75 transition-colors duration-300 group-hover:border-accent-cyan/25"
                   >
                     {it}
                   </li>

@@ -313,10 +313,6 @@ export default function Navbar() {
                     : "bg-navy-900 text-white hover:bg-primary",
                 )}
               >
-                <span className="relative flex h-2 w-2" aria-hidden>
-                  <span className="nk-ping absolute inline-flex h-full w-full rounded-full bg-state-success" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-state-success" />
-                </span>
                 Let&apos;s talk
                 <span
                   className={cn(
@@ -385,8 +381,12 @@ export default function Navbar() {
         </div>
 
         <div className="relative flex min-h-full flex-col px-6 pb-10 pt-[104px] sm:px-10">
-          <p className="nk-menu-item font-mono text-[11px] uppercase tracking-[0.2em] text-white/45" style={{ ["--d" as string]: "80ms" }}>
-            {"// navigate"}
+          <p
+            className="nk-menu-item flex items-center gap-3 text-[13px] font-semibold uppercase tracking-[0.16em] text-accent-cyan"
+            style={{ ["--d" as string]: "80ms" }}
+          >
+            <span aria-hidden className="h-px w-8 bg-current opacity-60" />
+            Menu
           </p>
 
           <nav aria-label="Mobile" className="mt-5">
@@ -404,9 +404,6 @@ export default function Navbar() {
                       aria-current={isActive ? "location" : undefined}
                       className="group flex items-baseline gap-4 border-b border-white/[0.07] py-3"
                     >
-                      <span className={cn("w-7 font-mono text-[12px]", isActive ? "text-accent-saffron" : "text-white/35")}>
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
                       <span
                         className={cn(
                           "text-[clamp(2.25rem,10.5vw,4rem)] font-extrabold leading-[1.02] tracking-[-0.035em] transition-[color,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-2",
@@ -427,13 +424,9 @@ export default function Navbar() {
           </nav>
 
           <div className="mt-auto pt-12">
-            <div className="nk-menu-item flex items-center gap-2.5 font-mono text-[12px] text-white/60" style={{ ["--d" as string]: "520ms" }}>
-              <span className="relative flex h-2 w-2" aria-hidden>
-                <span className="nk-ping absolute inline-flex h-full w-full rounded-full bg-state-success" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-state-success" />
-              </span>
-              {profile.status}
-            </div>
+            <p className="nk-menu-item text-[13px] font-medium text-white/55" style={{ ["--d" as string]: "520ms" }}>
+              Get in touch
+            </p>
             <a
               href={`mailto:${profile.email}`}
               className="nk-menu-item mt-3 inline-block text-[clamp(1.15rem,5.4vw,1.6rem)] font-bold tracking-tight text-white underline decoration-white/20 underline-offset-[6px] transition-colors hover:decoration-accent-saffron"

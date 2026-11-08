@@ -50,7 +50,7 @@ export type CosmosOptions = {
   labels: (HTMLElement | null)[];
   /** Reticle root; its children with [data-corner] are positioned each frame, [data-tag] gets the name. */
   reticle: HTMLElement | null;
-  /** Mono readout of the current view centre. */
+  /** Optional readout of the current view centre (RA/Dec). */
   readout: HTMLElement | null;
   initialFocus: number;
   onHover(i: number | null): void;
@@ -79,10 +79,8 @@ const LANDMARKS: { name: string; ra: number; dec: number; mag: number }[] = [
   { name: "Procyon", ra: 7.655, dec: 5.225, mag: 0.34 },
   { name: "Achernar", ra: 1.6286, dec: -57.2368, mag: 0.46 },
   { name: "Hadar", ra: 14.0637, dec: -60.373, mag: 0.61 },
-  { name: "Altair", ra: 19.8464, dec: 8.8683, mag: 0.76 },
   { name: "Aldebaran", ra: 4.5987, dec: 16.5093, mag: 0.85 },
   { name: "Spica", ra: 13.4199, dec: -11.1613, mag: 0.97 },
-  { name: "Pollux", ra: 7.7553, dec: 28.0262, mag: 1.14 },
   { name: "Fomalhaut", ra: 22.9608, dec: -29.6222, mag: 1.16 },
   { name: "Polaris", ra: 2.5303, dec: 89.2641, mag: 1.98 },
 ];
@@ -169,7 +167,7 @@ export function createCosmos(opts: CosmosOptions): CosmosApi | null {
   viewport.appendChild(canvas);
 
   const coarse = window.matchMedia("(pointer: coarse)").matches;
-  let dpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.5 : 1.75);
+  let dpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.25 : 1.5);
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 400);
@@ -209,11 +207,45 @@ export function createCosmos(opts: CosmosOptions): CosmosApi | null {
     return h ? new THREE.Vector4(h.dir.x, h.dir.y, h.dir.z, h.base) : new THREE.Vector4(0, 1, 0, 0);
   });
 
+  /* Bake the expensive painterly field once into a cubemap (it barely moved
+     anyway), so each frame only samples a texture + draws halos/moon. */
+  const bakeSize = coarse || Math.min(screen.width, screen.height) < 900 ? 512 : 1024;
+  const skyTarget = track(new THREE.WebGLCubeRenderTarget(bakeSize, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter }));
+  {
+    const vortex = VORTICES.map(([ra, dec, w]) => {
+      const v = raDecToVec(ra, dec);
+      return new THREE.Vector4(v[0], v[1], v[2], w);
+    });
+    const bakeMat = new THREE.ShaderMaterial({
+      vertexShader: SKY_VERT,
+      fragmentShader: skyFrag(HALO_SLOTS, VORTICES.length, true),
+      uniforms: {
+        uTime: { value: 0 },
+        uSkyMap: { value: null },
+        uHalos: { value: haloUniform },
+        uVortex: { value: vortex },
+        uMoon: { value: new THREE.Vector3(...MOON) },
+        uGalPole: { value: new THREE.Vector3(...GAL_POLE) },
+      },
+      side: THREE.BackSide,
+      depthWrite: false,
+      depthTest: false,
+    });
+    const bakeGeo = new THREE.SphereGeometry(100, 64, 32);
+    const bakeScene = new THREE.Scene();
+    bakeScene.add(new THREE.Mesh(bakeGeo, bakeMat));
+    const cubeCam = new THREE.CubeCamera(0.1, 400, skyTarget);
+    cubeCam.update(renderer, bakeScene);
+    bakeGeo.dispose();
+    bakeMat.dispose();
+  }
+
   const skyMat = track(
     new THREE.ShaderMaterial({
       vertexShader: SKY_VERT,
       fragmentShader: skyFrag(HALO_SLOTS, VORTICES.length),
       uniforms: {
+        uSkyMap: { value: skyTarget.texture },
         uTime,
         uHalos: { value: haloUniform },
         uVortex: {
@@ -230,7 +262,7 @@ export function createCosmos(opts: CosmosOptions): CosmosApi | null {
       depthTest: false,
     }),
   );
-  const skyGeo = track(new THREE.SphereGeometry(100, 96, 48));
+  const skyGeo = track(new THREE.SphereGeometry(100, 48, 24));
   const sky = new THREE.Mesh(skyGeo, skyMat);
   sky.renderOrder = -10;
   sky.frustumCulled = false;
@@ -901,7 +933,7 @@ export function createCosmos(opts: CosmosOptions): CosmosApi | null {
           }
           ret.init = true;
           if (ret.target !== target && reticleTag) {
-            reticleTag.textContent = `${String(target + 1).padStart(2, "0")} · ${constellations[target].name.toUpperCase()}`;
+            reticleTag.textContent = constellations[target].name;
           }
           ret.target = target;
         }

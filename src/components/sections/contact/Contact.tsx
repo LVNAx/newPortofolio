@@ -156,9 +156,9 @@ export default function Contact() {
       <div className="relative mx-auto max-w-[1240px] px-4 sm:px-6 lg:px-8">
         {/* ---------- header ---------- */}
         <Reveal>
-          <p className="flex items-center gap-3 font-mono text-[12px] font-medium uppercase tracking-[0.2em] text-primary sm:text-[13px]">
-            <span className="inline-block h-px w-8 bg-primary/40" aria-hidden />
-            {"// 06 — CONTACT"}
+          <p className="flex items-center gap-3 text-[13px] font-semibold uppercase tracking-[0.16em] text-primary">
+            <span aria-hidden className="h-px w-8 bg-current opacity-60" />
+            Contact
           </p>
         </Reveal>
         <Reveal delay={0.05}>
@@ -173,23 +173,12 @@ export default function Contact() {
               </span>
             </Highlight>
             <span className="text-accent-saffron">.</span>
-            <span
-              aria-hidden
-              className="nk-caret ml-[0.08em] inline-block h-[0.72em] w-[0.09em] translate-y-[0.06em] rounded-[2px] bg-accent-sky align-baseline"
-            />
           </h2>
         </Reveal>
         <Reveal delay={0.1}>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6">
-            <p className="inline-flex items-center gap-2.5 rounded-full border border-state-success/20 bg-white px-4 py-2 font-mono text-[12.5px] text-ink shadow-[0_8px_24px_-16px_rgba(11,16,45,0.4)] sm:text-[13px]">
-              <span className="relative flex h-2 w-2" aria-hidden>
-                <span className="nk-ping absolute inline-flex h-full w-full rounded-full bg-state-success" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-state-success" />
-              </span>
-              <span className="text-ink-muted">status:</span> {profile.status}
-            </p>
-            <p className="inline-flex items-center gap-2 text-[15px] text-ink-muted">
-              <MapPin className="h-4 w-4 text-accent-coral" aria-hidden />
+            <p className="inline-flex items-start gap-2 text-[15px] text-ink-muted">
+              <MapPin className="mt-[3px] h-4 w-4 shrink-0 text-accent-coral" aria-hidden />
               {profile.location}
             </p>
           </div>
@@ -213,9 +202,7 @@ export default function Contact() {
                 </div>
 
                 <div className="relative">
-                  <p className="font-mono text-[11.5px] uppercase tracking-[0.18em] text-white/50">
-                    {"> primary_channel"}
-                  </p>
+                  <p className="text-[13px] font-medium text-white/55">Email is the best way to reach me</p>
                   <a
                     href={`mailto:${profile.email}`}
                     className="mt-4 block break-all text-[clamp(1.45rem,6.4vw,3rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-white transition-colors hover:text-accent-saffron"
@@ -224,8 +211,8 @@ export default function Contact() {
                     {profile.email}
                   </a>
                   <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/60">
-                    The fastest way to reach me — for internships, research collaborations or an AI idea you
-                    want to see running.
+                    For research collaborations, projects or an AI idea you want to see running. I read
+                    everything and reply personally.
                   </p>
                   <div className="mt-8 flex flex-wrap gap-3">
                     <button
@@ -283,7 +270,7 @@ export default function Contact() {
                         </span>
                         <span className="relative flex min-w-0 flex-col">
                           <span className="text-[16px] font-bold text-ink">{s.label}</span>
-                          <span className="truncate font-mono text-[12.5px] text-ink-muted">{s.handle}</span>
+                          <span className="truncate text-[13px] text-ink-muted">{s.handle}</span>
                         </span>
                         <ArrowUpRight
                           aria-hidden
@@ -300,12 +287,12 @@ export default function Contact() {
           {/* right: compose form */}
           <Reveal delay={0.1} className="lg:col-span-5">
             <div className="relative h-full overflow-hidden rounded-[32px] border border-navy-900/[0.06] bg-white shadow-[0_20px_50px_-20px_rgba(11,16,45,0.35)]">
-              {/* terminal chrome */}
-              <div className="flex items-center gap-2 border-b border-navy-900/[0.06] px-5 py-3.5 sm:px-7">
-                <span className="h-2.5 w-2.5 rounded-full bg-accent-coral" aria-hidden />
-                <span className="h-2.5 w-2.5 rounded-full bg-accent-saffron" aria-hidden />
-                <span className="h-2.5 w-2.5 rounded-full bg-accent-sky" aria-hidden />
-                <span className="ml-3 truncate font-mono text-[11.5px] text-ink-muted">~/contact/compose.msg</span>
+              {/* hackvidia accent strip */}
+              <div aria-hidden className="flex h-1.5">
+                <span className="flex-1 bg-primary" />
+                <span className="flex-1 bg-accent-sky" />
+                <span className="flex-1 bg-accent-coral" />
+                <span className="flex-1 bg-accent-saffron" />
               </div>
 
               <form noValidate onSubmit={onSubmit} className="flex flex-col gap-5 p-5 sm:p-7" aria-describedby={`${uid}-note`}>
@@ -317,8 +304,8 @@ export default function Contact() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label htmlFor={ids.name} className="font-mono text-[11.5px] uppercase tracking-[0.14em] text-ink-muted">
-                    01 / Your name
+                  <label htmlFor={ids.name} className="text-[13px] font-semibold text-ink">
+                    Your name
                   </label>
                   <input
                     ref={nameRef}
@@ -341,8 +328,8 @@ export default function Contact() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label htmlFor={ids.email} className="font-mono text-[11.5px] uppercase tracking-[0.14em] text-ink-muted">
-                    02 / Your email
+                  <label htmlFor={ids.email} className="text-[13px] font-semibold text-ink">
+                    Your email
                   </label>
                   <input
                     ref={emailRef}
@@ -366,8 +353,8 @@ export default function Contact() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label htmlFor={ids.message} className="font-mono text-[11.5px] uppercase tracking-[0.14em] text-ink-muted">
-                    03 / What are we building?
+                  <label htmlFor={ids.message} className="text-[13px] font-semibold text-ink">
+                    What are we building?
                   </label>
                   <textarea
                     ref={messageRef}
@@ -400,7 +387,7 @@ export default function Contact() {
                   />
                 </button>
 
-                <p aria-live="polite" className="min-h-[1.25rem] font-mono text-[12px] text-ink-muted">
+                <p aria-live="polite" className="min-h-[1.25rem] text-[13px] text-ink-muted">
                   {sent ? (
                     <>
                       <span className="text-state-success">✓</span> Your mail app should open now. If it
@@ -424,7 +411,7 @@ export default function Contact() {
         )}
       >
         {toast.msg && (
-          <span className="flex items-center gap-2.5 whitespace-nowrap rounded-full bg-navy-900 px-5 py-3 font-mono text-[13px] text-white shadow-[0_20px_40px_-12px_rgba(5,8,26,0.6)] ring-1 ring-white/10">
+          <span className="flex items-center gap-2.5 whitespace-nowrap rounded-full bg-navy-900 px-5 py-3 text-[13px] font-medium text-white shadow-[0_20px_40px_-12px_rgba(5,8,26,0.6)] ring-1 ring-white/10">
             <span
               className={cn(
                 "grid h-5 w-5 place-items-center rounded-full",

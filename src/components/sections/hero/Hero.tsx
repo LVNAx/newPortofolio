@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, ArrowUpRight, Download, MousePointerClick } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Download } from "lucide-react";
 import clsx from "clsx";
 import { profile, socials } from "@/data/site";
-import { projectCategories, projects, stats } from "@/data/portfolio";
+import { projectCategories, projects } from "@/data/portfolio";
 import { asset } from "@/lib/asset";
 import SocialIcon from "@/components/shared/SocialIcons";
 import { GhostTiles, LeafCorner, TileCluster } from "@/components/shared/Decorators";
@@ -18,9 +18,6 @@ type LenisLike = { stop(): void; start(): void; scrollTo(t: string | number | HT
 const getLenis = () => (window as unknown as { __lenis?: LenisLike }).__lenis;
 
 const categoryLabel = (key: string) => projectCategories.find((c) => c.key === key)?.label ?? key;
-
-/** Facts for the HUD — derived from data only. */
-const podiums = stats.find((s) => /podium/i.test(s.label));
 
 /** Smooth-scroll to #projects, then ask the Projects section to open a case study. */
 function openProject(slug: string, reduced: boolean) {
@@ -55,8 +52,6 @@ export default function Hero() {
 
   const [status, setStatus] = useState<"loading" | "ready" | "failed">("loading");
   const [hover, setHover] = useState<number | null>(null);
-  const [front, setFront] = useState<number | null>(null);
-  const [coreStats, setCoreStats] = useState<HeroSceneController["stats"] | null>(null);
 
   const sceneOn = !reduced && status === "ready";
 
@@ -99,7 +94,6 @@ export default function Hero() {
                 return a ? { x: a.left - c.left, y: a.top - c.top } : null;
               },
               onHover: setHover,
-              onFront: setFront,
             }),
           )
           .then((ctrl) => {
@@ -110,7 +104,6 @@ export default function Hero() {
               const rect = s.getBoundingClientRect();
               ctrl.setScroll(Math.min(1, Math.max(0, -rect.top / Math.max(1, rect.height))), window.scrollY);
             }
-            setCoreStats(ctrl.stats);
             setStatus("ready");
           })
           .catch(() => {
@@ -220,7 +213,6 @@ export default function Hero() {
   );
 
   const hovered = hover !== null ? projects[hover] : null;
-  const focusTitle = front !== null ? projects[front]?.title : projects.find((p) => p.featured)?.title;
   const rowSocials = socials.filter((s) => s.key !== "resume");
 
   return (
@@ -265,16 +257,6 @@ export default function Hero() {
         >
           <StaticCore />
         </div>
-        {/* interaction hint under the core (desktop) */}
-        <p
-          className={clsx(
-            "absolute left-0 top-[min(33vh,300px)] hidden -translate-x-1/2 items-center gap-2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.22em] text-white/45 transition-opacity duration-700 lg:flex",
-            sceneOn ? "opacity-100" : "opacity-0",
-          )}
-        >
-          <MousePointerClick className="h-3.5 w-3.5 text-accent-cyan" strokeWidth={1.75} />
-          projects in orbit · drag to spin · click to open
-        </p>
       </div>
 
       {/* ---------- hackvidia decorators (low opacity on navy) ---------- */}
@@ -292,19 +274,12 @@ export default function Hero() {
       {/* ---------- copy ---------- */}
       <div className="pointer-events-none relative z-10 mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-end px-5 pb-12 pt-[calc(72px+min(36svh,330px))] sm:px-8 sm:pb-20 sm:pt-[calc(72px+min(42svh,420px))] lg:px-14 lg:pb-[clamp(96px,12vh,136px)] lg:pt-32">
         <div className="pointer-events-auto max-w-[680px]">
-          {/* status pill */}
-          <div className="hero-rise mb-5 sm:mb-7" style={{ "--d": "80ms" } as React.CSSProperties}>
-            <span className="inline-flex max-w-full items-center gap-2.5 rounded-full border border-white/10 bg-white/5 py-1.5 pl-2.5 pr-3.5 text-[12px] font-medium text-white/80 backdrop-blur-xl sm:text-[13px]">
-              <span className="relative flex h-2.5 w-2.5 shrink-0">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-state-success opacity-70 motion-safe:animate-ping" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#3ee08f] shadow-[0_0_10px_rgba(62,224,143,0.8)]" />
-              </span>
-              <span className="truncate">{profile.status}</span>
-            </span>
-          </div>
-
-          <p className="hero-rise mb-3 font-mono text-[12px] tracking-[0.04em] text-accent-cyan sm:mb-4 sm:text-[14px]" style={{ "--d": "160ms" } as React.CSSProperties}>
-            <span className="text-white/40">&gt;</span> hello, world <span className="text-white/40">—</span> I&apos;m
+          <p
+            className="hero-rise mb-3 flex items-center gap-3 text-[14px] font-semibold text-accent-cyan sm:mb-4 sm:text-[16px]"
+            style={{ "--d": "120ms" } as React.CSSProperties}
+          >
+            <span aria-hidden className="h-px w-8 bg-current opacity-60" />
+            Hi, I&apos;m
           </p>
 
           <h1 className="font-sans text-white">
@@ -375,9 +350,8 @@ export default function Hero() {
                 </li>
               );
             })}
-            <li aria-hidden className="ml-2 hidden font-mono text-[11px] tracking-[0.08em] text-white/35 md:block">
-              {profile.campus}
-            </li>
+            <li aria-hidden className="ml-3 mr-1 hidden h-5 w-px bg-white/15 md:block" />
+            <li className="hidden text-[13px] font-medium text-white/50 md:block">{profile.campus}</li>
           </ul>
         </div>
       </div>
@@ -387,7 +361,7 @@ export default function Hero() {
         aria-label="Projects in orbit"
         className="sr-only z-30 focus-within:not-sr-only focus-within:absolute focus-within:left-5 focus-within:top-24 focus-within:max-h-[60svh] focus-within:w-72 focus-within:overflow-y-auto focus-within:rounded-2xl focus-within:border focus-within:border-white/10 focus-within:bg-navy-900/90 focus-within:p-4 focus-within:backdrop-blur-xl"
       >
-        <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-accent-cyan">Projects in orbit</p>
+        <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-accent-cyan">Projects</p>
         <ul className="space-y-1">
           {projects.map((p) => (
             <li key={p.slug}>
@@ -403,35 +377,15 @@ export default function Hero() {
         </ul>
       </nav>
 
-      {/* ---------- HUD ---------- */}
-      <div
-        aria-hidden
-        className="hero-rise pointer-events-none absolute bottom-8 right-8 z-10 hidden w-[260px] rounded-2xl border border-white/10 bg-navy-950/55 p-4 font-mono text-[11px] leading-[1.9] text-white/55 backdrop-blur-xl lg:block xl:right-12"
-        style={{ "--d": "1200ms" } as React.CSSProperties}
-      >
-        <div className="mb-2 flex items-center justify-between border-b border-white/10 pb-2 text-[10px] uppercase tracking-[0.2em]">
-          <span className="text-accent-cyan">neural_core</span>
-          <span className="flex items-center gap-1.5 text-white/40">
-            <span className={clsx("h-1.5 w-1.5 rounded-full", sceneOn ? "bg-[#3ee08f]" : "bg-accent-saffron")} />
-            {sceneOn ? "live" : reduced || status === "failed" ? "static" : "booting"}
-          </span>
-        </div>
-        <HudRow k="projects" v={String(projects.length)} />
-        {podiums && <HudRow k="podiums" v={`${podiums.value}${podiums.suffix}`} />}
-        <HudRow k="status" v="shipping" accent />
-        {coreStats && <HudRow k="synapses" v={`${coreStats.synapses}`} />}
-        <HudRow k="focus" v={focusTitle ?? "—"} />
-      </div>
-
       {/* ---------- scroll cue ---------- */}
       <a
         href="#about"
         aria-label="Scroll to about"
-        className="hero-rise absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-white/40 transition-colors hover:text-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan sm:flex"
+        className="hero-rise absolute bottom-8 right-8 z-10 hidden items-center gap-3 rounded-full text-[12px] font-medium text-white/50 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan sm:flex lg:bottom-10 lg:right-14"
         style={{ "--d": "1300ms" } as React.CSSProperties}
       >
-        scroll
-        <span className="hero-scroll-line block h-10 w-px bg-white/15" />
+        Scroll
+        <span className="hero-scroll-line block h-10 w-px bg-white/20" />
       </a>
 
       {/* ---------- floating label over a hovered card ---------- */}
@@ -444,7 +398,7 @@ export default function Hero() {
         )}
       >
         <span className="flex flex-col leading-tight">
-          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-cyan">{hovered ? categoryLabel(hovered.category) : ""}</span>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-accent-cyan">{hovered ? categoryLabel(hovered.category) : ""}</span>
           <span className="text-[14px] font-semibold">{hovered?.title}</span>
         </span>
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-cyan text-navy-950">
@@ -452,17 +406,5 @@ export default function Hero() {
         </span>
       </div>
     </section>
-  );
-}
-
-function HudRow({ k, v, accent }: { k: string; v: string; accent?: boolean }) {
-  return (
-    <div className="flex items-baseline justify-between gap-3">
-      <span>
-        <span className="text-white/30">&gt; </span>
-        {k}
-      </span>
-      <span className={clsx("truncate text-right", accent ? "text-[#3ee08f]" : "text-white/85")}>{v}</span>
-    </div>
   );
 }

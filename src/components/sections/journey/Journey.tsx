@@ -11,7 +11,7 @@ import VerticalTimeline from "./VerticalTimeline";
 import Experience from "./Experience";
 
 /**
- * 05 — JOURNEY: SMP → SMA → University as a pinned horizontal timeline on
+ * Journey: SMP → SMA → University as a pinned horizontal timeline on
  * desktop (vertical drawn rail on mobile / reduced motion), followed by
  * current experience.
  */
@@ -38,8 +38,9 @@ export default function Journey() {
       {/* ---------- header ---------- */}
       <div className="mx-auto w-full max-w-[1180px] px-4 sm:px-8">
         <Reveal>
-          <p className="font-mono text-[12px] font-bold uppercase tracking-[0.22em] text-primary sm:text-[13px]">
-            {"// 05 — journey"}
+          <p className="flex items-center gap-3 text-[13px] font-semibold uppercase tracking-[0.16em] text-primary">
+            <span aria-hidden className="h-px w-8 bg-current opacity-60" />
+            Journey
           </p>
         </Reveal>
 
@@ -58,18 +59,18 @@ export default function Journey() {
           </Reveal>
 
           <Reveal className="lg:col-span-4" delay={0.12}>
-            <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-[22px] border border-primary/10 bg-primary/10 font-mono">
+            <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-[22px] border border-primary/10 bg-primary/10">
               <div className="bg-surface px-4 py-4">
-                <dt className="text-[10.5px] uppercase tracking-[0.2em] text-ink-faint">stages</dt>
-                <dd className="mt-1 text-[24px] font-bold leading-none text-ink">{String(journey.length).padStart(2, "0")}</dd>
+                <dt className="text-[13px] font-medium text-ink-muted">Schools</dt>
+                <dd className="mt-1.5 text-[26px] font-extrabold leading-none tabular-nums text-ink">{journey.length}</dd>
               </div>
               <div className="bg-surface px-4 py-4">
-                <dt className="text-[10.5px] uppercase tracking-[0.2em] text-ink-faint">since</dt>
-                <dd className="mt-1 text-[24px] font-bold leading-none text-ink">{first}</dd>
+                <dt className="text-[13px] font-medium text-ink-muted">Since</dt>
+                <dd className="mt-1.5 text-[26px] font-extrabold leading-none tabular-nums text-ink">{first}</dd>
               </div>
               <div className="col-span-2 bg-surface px-4 py-4">
                 <dt className="sr-only">Location</dt>
-                <dd className="flex items-start gap-2.5 text-[12.5px] leading-[1.55] text-ink-muted">
+                <dd className="flex items-start gap-2.5 text-[13px] leading-[1.55] text-ink-muted">
                   <MapPin aria-hidden className="mt-0.5 size-4 shrink-0 text-accent-coral" strokeWidth={2.2} />
                   {profile.location}
                 </dd>

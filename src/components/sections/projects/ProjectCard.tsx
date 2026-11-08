@@ -1,12 +1,12 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Globe, Star } from "lucide-react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { useRef, type PointerEvent } from "react";
 import type { Project } from "@/data/portfolio";
 import { ProjectMedia } from "./ProjectMedia";
 import { CategoryChip, MetricBadge, StackChips } from "./parts";
-import { rgb, useMediaQuery } from "./utils";
+import { linkCta, linkHost, rgb, useMediaQuery } from "./utils";
 
 /**
  * Grid card: cover, category chip, title, tagline, stack chips, metric.
@@ -32,6 +32,7 @@ export default function ProjectCard({
   const sry = useSpring(ry, { stiffness: 220, damping: 22 });
 
   const a = rgb(p.accent);
+  const primaryLink = p.links?.[0];
 
   const onMove = (e: PointerEvent<HTMLDivElement>) => {
     const el = ref.current;
@@ -91,8 +92,9 @@ export default function ProjectCard({
             <div className="flex flex-wrap items-center gap-1.5">
               <CategoryChip project={p} />
               {p.featured && (
-                <span className="rounded-full bg-navy-900/85 px-2.5 py-1 font-mono text-[10px] tracking-wide text-accent-saffron uppercase backdrop-blur">
-                  ★ flagship
+                <span className="inline-flex items-center gap-1 rounded-full bg-navy-900/85 px-2.5 py-1 text-[12px] font-semibold text-white backdrop-blur">
+                  <Star className="h-3 w-3 text-accent-saffron" fill="currentColor" aria-hidden />
+                  Flagship
                 </span>
               )}
             </div>
@@ -115,7 +117,7 @@ export default function ProjectCard({
 
         {/* body */}
         <div className="flex flex-1 flex-col p-5 sm:p-6">
-          <p className="font-mono text-[11px] tracking-wide text-ink-faint">
+          <p className="text-[12.5px] leading-snug font-medium text-ink-faint">
             {p.context} · {p.year}
           </p>
           <h4 className="mt-2 text-[22px] leading-[1.15] font-extrabold tracking-tight text-ink">
@@ -132,6 +134,25 @@ export default function ProjectCard({
 
           <div className="mt-auto pt-5">
             <StackChips stack={p.stack} max={4} />
+            {primaryLink && (
+              <a
+                href={primaryLink.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group/live relative z-[5] mt-5 flex items-center gap-2.5 rounded-2xl border border-primary/15 bg-primary-light/60 px-4 py-3 text-primary transition-colors hover:border-primary hover:bg-primary hover:text-white focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none"
+              >
+                <Globe className="h-4 w-4 shrink-0" aria-hidden />
+                <span className="flex min-w-0 flex-col leading-tight">
+                  <span className="text-[14px] font-semibold">{linkCta(primaryLink.label, primaryLink.href)}</span>
+                  <span className="truncate text-[12px] font-medium opacity-70">{linkHost(primaryLink.href)}</span>
+                </span>
+                <ArrowUpRight
+                  className="ml-auto h-4 w-4 shrink-0 transition-transform duration-300 group-hover/live:translate-x-0.5 group-hover/live:-translate-y-0.5"
+                  aria-hidden
+                />
+                <span className="sr-only">(opens in a new tab)</span>
+              </a>
+            )}
           </div>
         </div>
       </motion.div>

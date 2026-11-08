@@ -3,7 +3,7 @@
  * Sources: PBP "myPortofolio" assignment (term3/PBP/portofolio), CV, project READMEs.
  */
 
-export type SocialKey = "github" | "linkedin" | "instagram" | "email" | "resume" | "x" | "line" | "spotify" | "medium";
+export type SocialKey = "github" | "linkedin" | "instagram" | "email" | "resume" | "x" | "line" | "spotify" | "medium" | "kaggle";
 
 export type SocialLink = { key: SocialKey; label: string; href: string; handle: string };
 
@@ -30,6 +30,7 @@ export const profile = {
 export const socials: SocialLink[] = [
   { key: "github", label: "GitHub", href: "https://github.com/LVNAx", handle: "@LVNAx" },
   { key: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/in/nugrahakc", handle: "in/nugrahakc" },
+  { key: "kaggle", label: "Kaggle", href: "https://www.kaggle.com/nugrahakc", handle: "@nugrahakc" },
   { key: "instagram", label: "Instagram", href: "https://instagram.com/nugrahakc", handle: "@nugrahakc" },
   { key: "email", label: "Email", href: "mailto:nugrahakc@gmail.com", handle: "nugrahakc@gmail.com" },
   { key: "resume", label: "Resume", href: "https://drive.google.com/file/d/136sJkpda_LMqWngHVFw7ASPczF36OqH-/view?usp=sharing", handle: "CV (PDF)" },

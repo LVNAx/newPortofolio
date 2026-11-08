@@ -34,19 +34,29 @@ export function seeded(seed: number) {
 export const categoryLabel = (key: ProjectCategory) =>
   projectCategories.find((c) => c.key === key)?.label ?? key;
 
-/** Short mono tag for chips. */
+/** Short category name for chips and compact counts. */
 export const categoryTag: Record<ProjectCategory, string> = {
-  agents: "agents",
-  ml: "ml/data",
-  web: "web/3d",
+  agents: "AI agents",
+  ml: "ML & data",
+  web: "Web & 3D",
 };
 
-/** Per-slug crop hints for screenshots that are not landscape-friendly. */
-const objectPositions: Record<string, string> = {};
+/**
+ * Per-slug crop hints. The Hypomone @LV and BEM UI shots are 16:9 desktop
+ * captures with the hero object (galaxy / 3D logo) in the middle and a nav
+ * bar on top — nudge the crop slightly up so the nav stays when the frame
+ * is taller than 16:9. BDC is a very wide banner, keep it centred.
+ */
+const objectPositions: Record<string, string> = {
+  "hypomone-lv": "50% 42%",
+  "bem-ui": "50% 40%",
+  "bdc-waste": "50% 50%",
+  waskita: "60% 40%",
+};
 export const objectPositionFor = (slug: string) => objectPositions[slug] ?? "50% 50%";
 
 /** Portrait artwork shown as a tilted "sheet" over a generated cover instead of being cropped. */
-const posterSlugs = new Set(["waskita"]);
+const posterSlugs = new Set<string>([]);
 export const isPoster = (slug: string) => posterSlugs.has(slug);
 
 /** Mix a hex colour with white (amount 0..1) — for soft tints of the accent. */
@@ -70,6 +80,23 @@ export function rgb(hex: string) {
 export const pad2 = (n: number) => String(n).padStart(2, "0");
 
 export const isExternal = (href: string) => /^https?:\/\//.test(href);
+
+/** Plain-language call to action for a project link (labels come from the data file). */
+export function linkCta(label: string, href: string) {
+  if (/^live$/i.test(label)) return "Visit live site";
+  if (/github/i.test(label) || /github\.com/i.test(href)) return "View on GitHub";
+  if (/devpost/i.test(label) || /devpost\.com/i.test(href)) return "View on Devpost";
+  return `Visit ${label}`;
+}
+
+/** Host name shown under a link button, e.g. "bemui.site". */
+export function linkHost(href: string) {
+  try {
+    return new URL(href).host.replace(/^www\./, "");
+  } catch {
+    return href;
+  }
+}
 
 /* ------------------------------------------------------------------ */
 /* Lenis + media queries                                                */

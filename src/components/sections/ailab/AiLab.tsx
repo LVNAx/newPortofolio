@@ -5,18 +5,18 @@ import { achievements, projects } from "@/data/portfolio";
 import { SECTION_IDS } from "@/data/site";
 import ActsWord from "./ActsWord";
 import AgentLoop from "./AgentLoop";
-import CodeTerminal from "./CodeTerminal";
 import NeuralField from "./NeuralField";
 import OpenProjectButton from "./OpenProjectButton";
 import SkillCards from "./SkillCards";
 import TechMarquee from "./TechMarquee";
+import VisionPipeline from "./VisionPipeline";
 import "./ailab.css";
 
 const readout: [string, string][] = [
-  ["agents", "WASKITA · FoundrOS"],
-  ["vision", "DINOv2 · SigLIP"],
-  ["tabular", "LightGBM · TabPFN"],
-  ["control", "MaskablePPO · CP-SAT"],
+  ["Agents", "WASKITA · FoundrOS"],
+  ["Vision", "DINOv2 · SigLIP"],
+  ["Tabular", "LightGBM · TabPFN"],
+  ["Control", "MaskablePPO · CP-SAT"],
 ];
 
 const fade = (stops: string): CSSProperties => ({
@@ -24,12 +24,8 @@ const fade = (stops: string): CSSProperties => ({
   maskImage: `linear-gradient(to bottom, ${stops})`,
 });
 
-function FigLabel({ n, children }: { n: string; children: ReactNode }) {
-  return (
-    <p className="font-mono text-[11.5px] uppercase tracking-[0.18em] text-white/45 sm:text-[12px]">
-      <span className="text-accent-cyan">[ fig.{n} ]</span> {children}
-    </p>
-  );
+function SubLabel({ children }: { children: ReactNode }) {
+  return <p className="text-[13px] font-semibold text-accent-cyan">{children}</p>;
 }
 
 export default function AiLab() {
@@ -72,8 +68,9 @@ export default function AiLab() {
         {/* ---------- header ---------- */}
         <div className="grid grid-cols-1 items-end gap-10 lg:grid-cols-12 lg:gap-12">
           <Reveal className="lg:col-span-7">
-            <p className="font-mono text-[12px] font-medium uppercase tracking-[0.2em] text-accent-cyan sm:text-[13px]">
-              {"// 02 — AI Lab"}
+            <p className="flex items-center gap-3 text-[13px] font-semibold uppercase tracking-[0.16em] text-accent-cyan">
+              <span aria-hidden className="h-px w-8 bg-current opacity-60" />
+              AI Lab
             </p>
             <h2
               id="ailab-title"
@@ -81,10 +78,6 @@ export default function AiLab() {
             >
               I build AI
               <br /> that <ActsWord />.
-              <span
-                aria-hidden
-                className="nk-caret ml-2 inline-block h-[0.72em] w-[0.1em] bg-accent-cyan align-baseline"
-              />
             </h2>
           </Reveal>
           <Reveal delay={0.1} className="lg:col-span-5 lg:pb-3">
@@ -92,12 +85,10 @@ export default function AiLab() {
               Agents that perceive, decide and execute real actions. Models validated down to the last decimal. And the
               product surfaces that put both in people&apos;s hands.
             </p>
-            <dl className="mt-7 grid grid-cols-1 gap-x-6 gap-y-2 font-mono text-[12.5px] sm:grid-cols-2">
+            <dl className="mt-7 grid grid-cols-1 gap-x-6 gap-y-2 text-[14px] sm:grid-cols-2">
               {readout.map(([k, v]) => (
                 <div key={k} className="flex gap-3 border-t border-white/10 pt-2">
-                  <dt className="w-[4.5rem] shrink-0 text-white/40">
-                    <span className="text-accent-cyan">›</span> {k}
-                  </dt>
+                  <dt className="w-[4.5rem] shrink-0 font-medium text-white/45">{k}</dt>
                   <dd className="text-white/85">{v}</dd>
                 </div>
               ))}
@@ -109,7 +100,7 @@ export default function AiLab() {
         <div className="mt-20 lg:mt-28">
           <Reveal className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <FigLabel n="01">the agent loop</FigLabel>
+              <SubLabel>The agent loop</SubLabel>
               <h3 className="mt-3 text-[28px] font-bold leading-tight tracking-tight sm:text-[36px]">
                 Two real systems. <span className="text-white/45">One loop.</span>
               </h3>
@@ -127,7 +118,7 @@ export default function AiLab() {
         {bdc && (
           <div className="mt-24 grid grid-cols-1 items-center gap-10 lg:mt-32 lg:grid-cols-12 lg:gap-14">
             <Reveal className="lg:col-span-5">
-              <FigLabel n="02">vision · frozen foundation models</FigLabel>
+              <SubLabel>Vision with frozen foundation models</SubLabel>
               <h3 className="mt-4 text-[28px] font-bold leading-[1.1] tracking-tight sm:text-[38px]">{bdc.tagline}</h3>
               <p className="mt-5 text-[16px] leading-[1.7] text-white/65">{bdc.description}</p>
               <div className="mt-8 flex flex-wrap items-end gap-x-10 gap-y-5">
@@ -136,7 +127,7 @@ export default function AiLab() {
                     <p className="bg-linear-to-r from-accent-sky to-accent-cyan bg-clip-text text-[56px] font-extrabold leading-none tracking-tight text-transparent sm:text-[64px]">
                       {bdc.metric.value}
                     </p>
-                    <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white/50">
+                    <p className="mt-2 text-[13px] font-medium text-white/50">
                       {bdc.metric.label}
                     </p>
                   </div>
@@ -144,18 +135,18 @@ export default function AiLab() {
                 {bdcRank && (
                   <div className="pb-1">
                     <p className="text-[26px] font-bold leading-none">{bdcRank.title}</p>
-                    <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white/50">
+                    <p className="mt-2 text-[13px] font-medium text-white/50">
                       {bdcRank.level}
                       {bdcRank.year ? ` · ${bdcRank.year}` : ""}
                     </p>
                   </div>
                 )}
               </div>
-              <p className="mt-6 font-mono text-[11.5px] text-white/40">{bdc.context}</p>
+              <p className="mt-6 text-[13px] text-white/45">{bdc.context}</p>
               <OpenProjectButton slug={bdc.slug} className="mt-7" />
             </Reveal>
             <Reveal delay={0.1} y={40} className="min-w-0 lg:col-span-7">
-              <CodeTerminal />
+              <VisionPipeline />
             </Reveal>
           </div>
         )}
@@ -164,7 +155,7 @@ export default function AiLab() {
         <div className="mt-24 lg:mt-32">
           <Reveal className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <FigLabel n="03">toolkit</FigLabel>
+              <SubLabel>Toolkit</SubLabel>
               <h3 className="mt-3 text-[28px] font-bold leading-tight tracking-tight sm:text-[36px]">
                 The stack behind the <span className="text-accent-cyan">agents</span>.
               </h3>

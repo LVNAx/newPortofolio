@@ -115,7 +115,7 @@ export default function AgentLoop() {
     document.getElementById(`${uid}-tab-${next}`)?.focus();
   };
 
-  const statusLabel = reduce ? "static" : userPaused ? "paused" : hover ? "holding" : "live";
+  const statusLabel = reduce ? "Static" : userPaused ? "Paused" : hover ? "Holding" : "Playing";
 
   return (
     <div
@@ -131,9 +131,8 @@ export default function AgentLoop() {
 
       {/* ---------- window bar ---------- */}
       <div className="relative flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3 sm:px-6">
-        <p className="truncate font-mono text-[11.5px] tracking-[0.04em] text-white/50 sm:text-[12.5px]">
-          <span className="text-white/30">fig.01 — </span>agent_loop.run(
-          <span style={{ color: accent }}>&quot;{current.slug}&quot;</span>)
+        <p className="truncate text-[13px] font-medium text-white/55 sm:text-[14px]">
+          How the loop runs — <span className="font-semibold" style={{ color: accent }}>{current.label}</span>
         </p>
         <button
           type="button"
@@ -141,15 +140,15 @@ export default function AgentLoop() {
           disabled={!!reduce}
           aria-pressed={userPaused}
           aria-label={userPaused ? "Resume the loop animation" : "Pause the loop animation"}
-          className="flex shrink-0 items-center gap-2 rounded-full border border-white/10 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white/70 transition-colors hover:border-white/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan disabled:opacity-60"
+          className="flex shrink-0 items-center gap-2 rounded-full border border-white/10 px-3 py-1.5 text-[12px] font-medium text-white/70 transition-colors hover:border-white/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan disabled:opacity-60"
         >
           <span className="relative flex h-2 w-2">
-            {statusLabel === "live" && (
+            {statusLabel === "Playing" && (
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-60" style={{ background: accent }} />
             )}
             <span
               className="relative inline-flex h-2 w-2 rounded-full"
-              style={{ background: statusLabel === "live" ? accent : "rgba(255,255,255,0.35)" }}
+              style={{ background: statusLabel === "Playing" ? accent : "rgba(255,255,255,0.35)" }}
             />
           </span>
           {statusLabel}
@@ -323,16 +322,16 @@ export default function AgentLoop() {
                     x={n.x}
                     y={n.y + 5}
                     textAnchor="middle"
-                    className="font-mono text-[15px] font-bold"
+                    className="font-sans text-[16px] font-bold"
                     fill={on ? accent : "rgba(255,255,255,0.6)"}
                   >
-                    {String(i + 1).padStart(2, "0")}
+                    {i + 1}
                   </text>
                   <text
                     x={n.lx}
                     y={n.nameY}
                     textAnchor={n.anchor}
-                    className="font-mono text-[20px] font-bold uppercase tracking-[0.08em] sm:text-[14px]"
+                    className="font-sans text-[20px] font-bold sm:text-[15px]"
                     fill={on ? "#ffffff" : "rgba(255,255,255,0.72)"}
                   >
                     {n.name}
@@ -341,7 +340,7 @@ export default function AgentLoop() {
                     x={n.lx}
                     y={n.tagY}
                     textAnchor={n.anchor}
-                    className="hidden font-mono text-[12px] sm:inline"
+                    className="hidden font-sans text-[12.5px] sm:inline"
                     fill={on ? accent : "rgba(255,255,255,0.42)"}
                   >
                     {current.steps[i].tag}
@@ -354,24 +353,24 @@ export default function AgentLoop() {
             <g key={`${caseIdx}-${active}`} className="nk-fade-up">
               <text
                 x={CX}
-                y={CY - 24}
+                y={CY - 20}
                 textAnchor="middle"
-                className="font-mono text-[13px] sm:text-[11px]"
-                fill="rgba(255,255,255,0.45)"
+                className="font-sans text-[13px] font-semibold sm:text-[12px]"
+                fill="rgba(255,255,255,0.5)"
               >
-                agent://{current.slug}
+                {current.label}
               </text>
-              <text x={CX} y={CY + 18} textAnchor="middle" className="font-sans text-[44px] font-extrabold" fill={accent}>
-                {String(active + 1).padStart(2, "0")}
+              <text x={CX} y={CY + 10} textAnchor="middle" className="font-sans text-[26px] font-extrabold" fill={accent}>
+                {LOOP_NODES[active]}
               </text>
               <text
                 x={CX}
-                y={CY + 40}
+                y={CY + 32}
                 textAnchor="middle"
-                className="font-mono text-[13px] font-bold uppercase tracking-[0.18em] sm:text-[11px]"
-                fill="#ffffff"
+                className="font-sans text-[13px] font-medium sm:text-[12px]"
+                fill="rgba(255,255,255,0.6)"
               >
-                {LOOP_NODES[active]}
+                Step {active + 1} of {LOOP_NODES.length}
               </text>
             </g>
           </svg>
@@ -398,7 +397,7 @@ export default function AgentLoop() {
                   onClick={() => switchCase(i)}
                   onKeyDown={onTabKey}
                   className={clsx(
-                    "relative rounded-full px-4 py-2.5 font-mono text-[12px] font-bold uppercase tracking-[0.14em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan sm:text-[13px]",
+                    "relative rounded-full px-4 py-2.5 text-[13px] font-bold uppercase tracking-[0.08em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan sm:text-[13px]",
                     on ? "text-navy-950" : "text-white/60 hover:text-white",
                   )}
                 >
@@ -428,7 +427,7 @@ export default function AgentLoop() {
                     i === caseIdx ? "translate-y-0 opacity-100" : "pointer-events-none invisible translate-y-2 opacity-0",
                   )}
                 >
-                  <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/45">{c.project.context}</p>
+                  <p className="text-[13px] font-medium text-white/50">{c.project.context}</p>
                   <h3 className="mt-2 text-[26px] font-extrabold leading-tight tracking-tight text-white sm:text-[30px]">
                     {c.project.title}
                   </h3>
@@ -454,21 +453,21 @@ export default function AgentLoop() {
                       className="group/step flex w-full items-center gap-3 py-2.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-cyan"
                     >
                       <span
-                        className="w-6 font-mono text-[11px] transition-colors"
+                        className="w-5 text-[13px] font-semibold tabular-nums transition-colors"
                         style={{ color: on ? accent : "rgba(255,255,255,0.35)" }}
                       >
-                        {String(i + 1).padStart(2, "0")}
+                        {i + 1}
                       </span>
                       <span
                         className={clsx(
-                          "font-mono text-[13px] font-bold uppercase tracking-[0.12em] transition-colors",
+                          "text-[14px] font-semibold transition-colors",
                           on ? "text-white" : "text-white/55 group-hover/step:text-white/85",
                         )}
                       >
                         {node}
                       </span>
                       <span
-                        className="ml-auto truncate pl-3 font-mono text-[11.5px] transition-colors"
+                        className="ml-auto truncate pl-3 text-[13px] transition-colors"
                         style={{ color: on ? accent : "rgba(255,255,255,0.38)" }}
                       >
                         {current.steps[i].tag}
@@ -502,8 +501,8 @@ export default function AgentLoop() {
                       )}
                       style={{ borderColor: c.accent }}
                     >
-                      <p className="font-mono text-[11px] uppercase tracking-[0.16em]" style={{ color: c.accent }}>
-                        &gt; {LOOP_NODES[si].toLowerCase()}()
+                      <p className="text-[13px] font-semibold" style={{ color: c.accent }}>
+                        {LOOP_NODES[si]} · {s.tag}
                       </p>
                       <p className="mt-1.5 text-[14.5px] leading-relaxed text-white/80 sm:text-[15px]">{s.caption}</p>
                     </div>
@@ -519,7 +518,7 @@ export default function AgentLoop() {
                   <p className="text-[40px] font-extrabold leading-none tracking-tight" style={{ color: accent }}>
                     {current.project.metric.value}
                   </p>
-                  <p className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white/50">
+                  <p className="mt-1.5 text-[13px] font-medium text-white/50">
                     {current.project.metric.label}
                   </p>
                 </div>

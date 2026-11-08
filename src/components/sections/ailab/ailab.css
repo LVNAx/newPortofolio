@@ -85,16 +85,6 @@
   }
 }
 
-/* ---------- caret ---------- */
-.nk-caret {
-  animation: nk-caret 1s steps(1, end) infinite;
-}
-@keyframes nk-caret {
-  50% {
-    opacity: 0;
-  }
-}
-
 /* ---------- skill cards: neural pattern ---------- */
 .nk-net-line {
   stroke-dasharray: 3 7;
@@ -134,7 +124,6 @@
   .nk-spin-rev,
   .nk-halo,
   .nk-fade-up,
-  .nk-caret,
   .nk-net-line {
     animation: none !important;
   }

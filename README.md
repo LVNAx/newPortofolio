@@ -18,7 +18,7 @@ The site deliberately fuses two of the owner's own projects:
 
 The result is **"Navy Observatory × Geometric Lab"**: deep navy canvases for the hero, AI Lab,
 Cosmos and footer; light canvases for About, Projects, Journey and Contact; Plus Jakarta Sans
-display type with JetBrains Mono for an AI-terminal voice (`// 02 — AI LAB`).
+display type throughout, with small tracked labels for eyebrows and metadata (JetBrains Mono is kept only for real code).
 
 ## Sections
 

@@ -74,7 +74,7 @@ export default function AllWork({
                     {c.label}
                     <span
                       className={clsx(
-                        "rounded-md px-1.5 py-0.5 font-mono text-[10.5px] leading-none",
+                        "rounded-md px-1.5 py-0.5 text-[12px] leading-none font-semibold tabular-nums",
                         on ? "bg-primary text-white" : "bg-surface-alt text-ink-faint",
                       )}
                     >

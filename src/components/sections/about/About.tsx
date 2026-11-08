@@ -8,10 +8,9 @@ import { asset } from "@/lib/asset";
 import PortraitMosaic from "./PortraitMosaic";
 import StatCounter from "./StatCounter";
 
-const facts: { key: string; value: string; live?: boolean }[] = [
-  { key: "campus", value: profile.campus },
-  { key: "based_in", value: profile.location },
-  { key: "status", value: profile.status, live: true },
+const facts: { key: string; value: string }[] = [
+  { key: "Studying", value: profile.campus },
+  { key: "Based in", value: profile.location },
 ];
 
 const statTiles = [
@@ -40,8 +39,9 @@ export default function About() {
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ---------- header ---------- */}
         <Reveal className="max-w-4xl">
-          <p className="font-mono text-[12px] font-medium uppercase tracking-[0.2em] text-primary sm:text-[13px]">
-            {"// 01 — About"}
+          <p className="flex items-center gap-3 text-[13px] font-semibold uppercase tracking-[0.16em] text-primary">
+            <span aria-hidden className="h-px w-8 bg-current opacity-60" />
+            About
           </p>
           <h2
             id="about-title"
@@ -94,21 +94,10 @@ export default function About() {
                     key={f.key}
                     className="group/fact flex flex-col gap-1 border-b border-ink/10 py-4 transition-colors hover:bg-white/60 sm:flex-row sm:items-baseline sm:gap-6 sm:px-2"
                   >
-                    <dt className="w-32 shrink-0 font-mono text-[11.5px] uppercase tracking-[0.16em] text-ink-faint transition-colors group-hover/fact:text-primary">
-                      <span aria-hidden className="mr-1.5 text-primary">
-                        ›
-                      </span>
+                    <dt className="w-32 shrink-0 text-[13px] font-medium text-ink-faint transition-colors group-hover/fact:text-primary">
                       {f.key}
                     </dt>
-                    <dd className="flex items-center gap-2.5 text-[15px] font-medium text-ink sm:text-[16px]">
-                      {f.live && (
-                        <span aria-hidden className="relative flex h-2 w-2 shrink-0">
-                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-state-success/60 motion-reduce:animate-none" />
-                          <span className="relative inline-flex h-2 w-2 rounded-full bg-state-success" />
-                        </span>
-                      )}
-                      {f.value}
-                    </dd>
+                    <dd className="text-[15px] font-medium text-ink sm:text-[16px]">{f.value}</dd>
                   </div>
                 ))}
               </dl>
@@ -119,13 +108,14 @@ export default function About() {
               <div className="relative overflow-hidden rounded-[28px] bg-navy-900 p-6 text-white shadow-[0_30px_60px_-30px_rgba(11,16,45,0.6)] sm:p-8">
                 <GhostTiles opacity={0.05} className="absolute -right-24 -top-16 h-auto w-[420px]" />
                 <QuarterCircle size={64} color="sky" rotate={90} className="absolute bottom-0 right-0 opacity-80" />
-                <div className="relative flex items-center justify-between gap-4">
-                  <p className="font-mono text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
-                    <span className="text-white/40">&gt;</span> currently.running()
+                <div className="relative">
+                  <p className="flex items-center gap-3 text-[13px] font-semibold uppercase tracking-[0.16em] text-accent-cyan">
+                    <span aria-hidden className="h-px w-8 bg-current opacity-60" />
+                    Currently
                   </p>
-                  <span className="font-mono text-[11px] text-white/40">
-                    {String(experiences.length).padStart(2, "0")} processes
-                  </span>
+                  <p className="mt-3 max-w-md text-[15px] leading-relaxed text-white/65 sm:text-[16px]">
+                    Alongside my Computer Science degree, this is where my weeks go.
+                  </p>
                 </div>
                 <ul className="relative mt-6 flex flex-col">
                   {experiences.map((exp, i) => (
@@ -151,11 +141,17 @@ export default function About() {
                       )}
                       <div className="min-w-0 flex-1">
                         <p className="text-[15px] font-semibold leading-snug sm:text-[16px]">{exp.title}</p>
-                        <p className="mt-0.5 text-[13px] text-white/55 sm:text-[14px]">{exp.org}</p>
+                        <p className="mt-0.5 text-[13px] text-white/55 sm:text-[14px]">
+                          {exp.org}
+                          <span className="sm:hidden"> · {exp.period}</span>
+                        </p>
                       </div>
-                      <span className="hidden shrink-0 rounded-full border border-white/15 px-2.5 py-1 font-mono text-[10.5px] uppercase tracking-[0.12em] text-white/60 transition-colors group-hover/exp:border-accent-cyan/60 group-hover/exp:text-accent-cyan sm:inline">
-                        {exp.type}
-                      </span>
+                      <div className="hidden shrink-0 flex-col items-end gap-1.5 sm:flex">
+                        <span className="rounded-full border border-white/15 px-2.5 py-0.5 text-[12px] font-medium text-white/70 transition-colors group-hover/exp:border-accent-cyan/60 group-hover/exp:text-accent-cyan">
+                          {exp.type}
+                        </span>
+                        <span className="text-[12px] text-white/45 tabular-nums">{exp.period}</span>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -178,10 +174,7 @@ export default function About() {
                       rotate={tile.rotate}
                       className="absolute right-0 top-0 h-10 w-10 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/stat:scale-125 sm:h-14 sm:w-14"
                     />
-                    <span className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-ink-faint">
-                      stat_{String(i + 1).padStart(2, "0")}
-                    </span>
-                    <p className="mt-6 flex items-baseline text-[38px] font-extrabold leading-none tracking-tight text-ink tabular-nums sm:text-[52px] lg:text-[60px]">
+                    <p className="mt-8 flex items-baseline text-[38px] font-extrabold leading-none tracking-tight text-ink tabular-nums sm:text-[52px] lg:text-[60px]">
                       <StatCounter value={s.value} decimals={s.decimals ?? 0} />
                       {s.suffix && <span className={clsx("ml-0.5", tile.suffix)}>{s.suffix}</span>}
                     </p>

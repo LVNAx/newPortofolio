@@ -58,13 +58,10 @@ export default function VerticalTimeline() {
                 viewport={{ once: true, amount: 0.6 }}
                 transition={{ duration: 0.6, ease: EASE }}
               >
-                <span className="font-mono text-[26px] font-bold leading-none tracking-tight text-ink sm:text-[32px]">
+                <span className="text-[26px] font-extrabold leading-none tracking-tight tabular-nums text-ink sm:text-[32px]">
                   {startYear(s)}
                 </span>
-                <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint">
-                  {"// "}
-                  {s.name}
-                </span>
+                <span className="text-[13px] font-semibold uppercase tracking-[0.12em] text-ink-faint">{s.name}</span>
               </motion.div>
 
               <motion.div

@@ -10,13 +10,13 @@ import { CardDeco, DotGrid, MosaicLeft, MosaicRight, PuzzlePiece, QuarterCircle 
 import Flagship from "./Flagship";
 import AllWork from "./AllWork";
 import ProjectModal from "./ProjectModal";
-import { categoryTag, pad2 } from "./utils";
+import { categoryLabel } from "./utils";
 
 type OpenProjectEvent = CustomEvent<{ slug?: string }>;
 
 /**
- * 03 — PROJECTS
- * A) flagship AI showcase (featured projects, scroll-linked parallax)
+ * Projects section
+ * A) flagship showcase (featured projects, scroll-linked parallax)
  * B) filterable archive grid of every project
  * C) case-study modal — also opened from anywhere via
  *    window.dispatchEvent(new CustomEvent("portfolio:open-project", { detail: { slug } }))
@@ -48,6 +48,7 @@ export default function Projects() {
   const counts = projectCategories
     .filter((c) => c.key !== "all")
     .map((c) => ({ key: c.key, n: projects.filter((p) => p.category === c.key).length }));
+  const liveCount = projects.filter((p) => (p.links?.length ?? 0) > 0).length;
 
   return (
     <section
@@ -67,8 +68,9 @@ export default function Projects() {
         {/* ---------- header ---------- */}
         <header className="grid gap-10 lg:grid-cols-12 lg:items-end">
           <Reveal className="lg:col-span-8">
-            <p className="font-mono text-[12px] font-medium tracking-[0.2em] text-primary uppercase sm:text-[13px]">
-              {"// 03 — PROJECTS"}
+            <p className="flex items-center gap-3 text-[13px] font-semibold uppercase tracking-[0.16em] text-primary">
+              <span aria-hidden className="h-px w-8 bg-current opacity-60" />
+              Projects
             </p>
             <h2
               id="projects-heading"
@@ -89,43 +91,52 @@ export default function Projects() {
               <span className="text-primary">.</span>
             </h2>
             <p className="mt-6 max-w-2xl text-[17px] leading-[1.6] text-ink-muted sm:text-[19px]">
-              AI first, interface always — multi-agent systems that execute instead of advise, models
-              tuned to the last decimal, and the products wrapped around them.
+              AI first, interface always — agents that execute instead of advise, models tuned to the
+              last decimal, and the products people actually use around them.
             </p>
           </Reveal>
 
-          {/* terminal index card */}
+          {/* summary card — every number is counted from the projects array */}
           <Reveal className="lg:col-span-4" delay={0.1}>
-            <div className="relative overflow-hidden rounded-[28px] bg-navy-900 p-6 font-mono text-[12.5px] leading-[1.9] text-white/70 shadow-[0_20px_50px_-20px_rgba(11,16,45,0.5)]">
+            <div className="relative overflow-hidden rounded-[28px] bg-navy-900 p-6 text-white shadow-[0_20px_50px_-20px_rgba(11,16,45,0.5)] sm:p-7">
               <QuarterCircle size={96} color="primary" rotate={90} className="absolute -top-px -right-px opacity-60" />
               <QuarterCircle size={48} color="sky" rotate={90} className="absolute top-0 right-0 opacity-80" />
-              <p className="text-white">
-                <span className="text-accent-cyan">$</span> ls ./projects
+              <p className="text-[13px] font-medium text-white/60">At a glance</p>
+              <p className="mt-2 flex items-baseline gap-2">
+                <span className="text-[52px] leading-none font-extrabold tracking-tight tabular-nums">{projects.length}</span>
+                <span className="text-[16px] font-semibold text-white/80">projects</span>
               </p>
-              <p>
-                <span className="text-white/45">total</span> <span className="text-white">{pad2(projects.length)}</span>
+              <p className="mt-2 text-[14px] leading-snug text-white/65">
+                <span className="font-semibold text-accent-saffron">{featured.length} flagship</span> ·{" "}
+                {liveCount} with public links
               </p>
-              <p>
-                <span className="text-white/45">flagship</span>{" "}
-                <span className="text-accent-saffron">{pad2(featured.length)}</span>
-              </p>
-              {counts.map((c) => (
-                <p key={c.key}>
-                  <span className="text-white/45">{categoryTag[c.key as keyof typeof categoryTag]}</span>{" "}
-                  <span className="text-white">{pad2(c.n)}</span>
-                </p>
-              ))}
-              <p className="mt-1 text-white">
-                <span className="text-accent-cyan">&gt;</span> status: shipping
-                <span className="ml-1 inline-block h-3.5 w-2 translate-y-0.5 animate-cursor-blink bg-accent-cyan motion-reduce:animate-none" aria-hidden />
-              </p>
+              <ul className="mt-5 flex flex-col gap-3 border-t border-white/10 pt-5">
+                {counts.map((c) => (
+                  <li key={c.key} className="flex flex-col gap-1.5">
+                    <div className="flex items-baseline justify-between gap-3 text-[14px]">
+                      <span className="font-medium text-white/80">{categoryLabel(c.key as Exclude<typeof c.key, "all">)}</span>
+                      <span className="font-bold tabular-nums">{c.n}</span>
+                    </div>
+                    <span aria-hidden className="block h-1 overflow-hidden rounded-full bg-white/10">
+                      <span
+                        className="block h-full rounded-full bg-accent-sky"
+                        style={{ width: `${(c.n / Math.max(1, projects.length)) * 100}%` }}
+                      />
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </Reveal>
         </header>
 
         {/* ---------- A) flagship ---------- */}
         <div className="mt-24 sm:mt-28 lg:mt-36">
-          <SubHeading index="A" title="Flagship AI systems" note={`${pad2(featured.length)} builds · scroll`} />
+          <SubHeading
+            title="Flagship work"
+            note={`${featured.length} selected projects`}
+            lead="The builds I'd walk you through first. Visit the live product where there is one, or open the case study for the details."
+          />
           <div className="mt-24 sm:mt-28">
             <Flagship projects={featured} onOpen={open} />
           </div>
@@ -141,11 +152,11 @@ export default function Projects() {
         <PuzzlePiece color="primary" className="absolute top-24 left-[44%] hidden h-10 w-10 rotate-[24deg] lg:block" opacity={0.15} />
 
         <div className="relative mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-10">
-          <SubHeading index="B" title="The full archive" note="filter · hover · open" />
-          <p className="mt-4 max-w-xl text-[15.5px] leading-[1.65] text-ink-muted">
-            Every build — agents, models and the web products around them. Open any card for the full
-            case study.
-          </p>
+          <SubHeading
+            title="The full archive"
+            note="Filter by track"
+            lead="Every build — agents, models and the web products around them. Open any card for the full case study."
+          />
           <Reveal className="mt-10">
             <AllWork projects={projects} onOpen={open} />
           </Reveal>
@@ -164,17 +175,21 @@ export default function Projects() {
   );
 }
 
-function SubHeading({ index, title, note }: { index: string; title: string; note: string }) {
+function SubHeading({ title, note, lead }: { title: string; note: string; lead?: string }) {
   return (
     <Reveal>
       <div className="flex items-center gap-4">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary font-mono text-[15px] font-bold text-white shadow-[0_10px_24px_-10px_rgba(47,65,153,0.8)]">
-          {index}
+        <span
+          aria-hidden
+          className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-primary shadow-[0_10px_24px_-10px_rgba(47,65,153,0.8)]"
+        >
+          <span className="absolute -right-5 -bottom-5 h-10 w-10 rounded-full bg-accent-saffron" />
         </span>
         <h3 className="text-[24px] leading-tight font-extrabold tracking-tight text-ink sm:text-[30px]">{title}</h3>
         <span aria-hidden className="hidden h-px flex-1 bg-linear-to-r from-primary/30 to-transparent sm:block" />
-        <span className="hidden font-mono text-[11px] tracking-[0.16em] text-ink-faint uppercase sm:inline">{note}</span>
+        <span className="hidden text-[13px] font-medium text-ink-faint sm:inline">{note}</span>
       </div>
+      {lead && <p className="mt-4 max-w-xl text-[15.5px] leading-[1.65] text-ink-muted">{lead}</p>}
     </Reveal>
   );
 }

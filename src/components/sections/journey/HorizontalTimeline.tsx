@@ -8,7 +8,7 @@ import { cn } from "@/lib/cn";
 import { journey } from "@/data/portfolio";
 import { profile } from "@/data/site";
 import StageCard from "./StageCard";
-import { pad2, startYear } from "./stage";
+import { startYear } from "./stage";
 
 /** Must match the CSS gate on the wrapper (`hidden lg:motion-safe:block`). */
 export const PIN_QUERY = "(min-width: 1024px) and (prefers-reduced-motion: no-preference)";
@@ -62,7 +62,7 @@ export default function HorizontalTimeline() {
         },
         onUpdate() {
           const p = tl.progress();
-          if (pctRef.current) pctRef.current.textContent = `${String(Math.round(p * 100)).padStart(3, "0")}%`;
+          if (pctRef.current) pctRef.current.textContent = `${Math.round(p * 100)}%`;
           const idx = Math.min(n - 1, Math.max(0, Math.round(p * (n - 1))));
           if (idx !== activeRef.current) {
             activeRef.current = idx;
@@ -138,18 +138,18 @@ export default function HorizontalTimeline() {
 
         {/* progress rail */}
         <div className="relative z-10 mx-auto w-[82vw] max-w-[1180px] pt-[104px] [@media(max-height:780px)]:pt-[88px]">
-          <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint">
+          <div className="flex items-center justify-between text-[13px] font-medium text-ink-muted">
             <span>
-              <span className="text-primary">{">"}</span> journey.traverse()
+              {origin} <span className="text-ink-faint">to</span> {destination}
             </span>
             <span aria-hidden className="flex items-center gap-4">
               <span className="flex items-center gap-1.5">
-                <ArrowDown className="size-3.5 animate-bounce" strokeWidth={2.2} />
-                scroll to travel
+                <ArrowDown className="size-3.5 animate-bounce motion-reduce:animate-none" strokeWidth={2.2} />
+                Keep scrolling
               </span>
               <span className="h-3 w-px bg-primary/20" />
-              <span ref={pctRef} className="tabular-nums text-ink">
-                000%
+              <span ref={pctRef} className="min-w-[4ch] text-right font-semibold tabular-nums text-ink">
+                0%
               </span>
             </span>
           </div>
@@ -171,7 +171,7 @@ export default function HorizontalTimeline() {
                   >
                     <div
                       className={cn(
-                        "absolute bottom-3 whitespace-nowrap font-mono text-[13px] font-bold tabular-nums transition-colors duration-500",
+                        "absolute bottom-3 whitespace-nowrap text-[14px] font-bold tabular-nums transition-colors duration-500",
                         i === 0 ? "left-0" : i === n - 1 ? "right-0" : "left-1/2 -translate-x-1/2",
                         reached ? "text-ink" : "text-ink-faint",
                       )}
@@ -192,12 +192,12 @@ export default function HorizontalTimeline() {
                     />
                     <div
                       className={cn(
-                        "absolute top-4 whitespace-nowrap font-mono text-[10.5px] uppercase tracking-[0.18em] transition-colors duration-500",
+                        "absolute top-4 whitespace-nowrap text-[13px] font-medium transition-colors duration-500",
                         i === 0 ? "left-0" : i === n - 1 ? "right-0" : "left-1/2 -translate-x-1/2",
-                        i === active ? "text-primary" : "text-ink-faint",
+                        i === active ? "font-semibold text-primary" : "text-ink-faint",
                       )}
                     >
-                      {pad2(i + 1)} · {s.name}
+                      {s.name}
                     </div>
                   </li>
                 );

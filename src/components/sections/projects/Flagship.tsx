@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { ArrowUpRight, Plus } from "lucide-react";
+import { Plus, Star } from "lucide-react";
 import {
   motion,
   useMotionTemplate,
@@ -17,8 +17,8 @@ import type { Project } from "@/data/portfolio";
 import { PuzzlePiece } from "@/components/shared/Decorators";
 import { TileField } from "./Geometry";
 import { ProjectMedia } from "./ProjectMedia";
-import { HighlightList, MetricBadge, StackChips } from "./parts";
-import { categoryLabel, pad2, rgb } from "./utils";
+import { HighlightList, MetricBadge, ProjectLinkButton, StackChips } from "./parts";
+import { categoryLabel, rgb } from "./utils";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -41,7 +41,7 @@ export default function Flagship({
   return (
     <div className="flex flex-col gap-24 sm:gap-28 lg:gap-40">
       {projects.map((p, i) => (
-        <FlagshipRow key={p.slug} project={p} index={i} total={projects.length} onOpen={onOpen} />
+        <FlagshipRow key={p.slug} project={p} index={i} onOpen={onOpen} />
       ))}
     </div>
   );
@@ -50,12 +50,10 @@ export default function Flagship({
 function FlagshipRow({
   project: p,
   index,
-  total,
   onOpen,
 }: {
   project: Project;
   index: number;
-  total: number;
   onOpen: (slug: string, trigger?: HTMLElement | null) => void;
 }) {
   const ref = useRef<HTMLElement>(null);
@@ -78,13 +76,13 @@ function FlagshipRow({
   const tilesRotate = useTransform(progress, [0, 1], [reverse ? 3 : -3, reverse ? -3 : 3]);
   const imageY = useTransform(progress, [0, 1], ["-7%", "7%"]);
   const badgeY = useTransform(progress, [0, 1], [60, -60]);
-  const numberY = useTransform(progress, [0, 1], [90, -90]);
   const inset = useTransform(progress, [0.08, 0.38], [12, 0], { clamp: true });
   const radius = useTransform(progress, [0.08, 0.38], [56, 32], { clamp: true });
   const clip = useMotionTemplate`inset(${inset}% ${inset}% ${inset}% ${inset}% round ${radius}px)`;
 
   const shownHighlights = p.highlights.slice(0, 5);
   const titleId = `flagship-${p.slug}-title`;
+  const hasLinks = (p.links?.length ?? 0) > 0;
 
   return (
     <article
@@ -94,18 +92,6 @@ function FlagshipRow({
     >
       {/* ---------------- media ---------------- */}
       <div className={clsx("relative lg:col-span-7", reverse && "lg:order-2")}>
-        {/* giant index number */}
-        <motion.span
-          aria-hidden
-          style={{ y: numberY }}
-          className={clsx(
-            "pointer-events-none absolute -top-16 font-sans text-[120px] leading-none font-extrabold tracking-tighter text-primary/[0.07] select-none sm:-top-24 sm:text-[180px] lg:-top-28 lg:text-[220px]",
-            reverse ? "right-0 lg:-right-6" : "left-0 lg:-left-6",
-          )}
-        >
-          {pad2(index + 1)}
-        </motion.span>
-
         {/* accent tile backdrop */}
         <motion.div
           aria-hidden
@@ -140,38 +126,27 @@ function FlagshipRow({
               project={p}
               size="hero"
               hideTitle
+              feature
+              align={reverse ? "right" : "left"}
               imgClassName="transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/frame:scale-[1.04]"
             />
           </motion.div>
 
-          {/* window chrome */}
-          <div className="absolute inset-x-0 top-0 flex items-center gap-2 bg-linear-to-b from-navy-950/70 to-transparent px-4 pt-3 pb-6 sm:px-5">
-            <span className="h-2.5 w-2.5 rounded-full bg-accent-coral" aria-hidden />
-            <span className="h-2.5 w-2.5 rounded-full bg-accent-saffron" aria-hidden />
-            <span className="h-2.5 w-2.5 rounded-full bg-accent-cyan" aria-hidden />
-            <span className="ml-2 truncate font-mono text-[11px] text-white/80">~/projects/{p.slug}</span>
-          </div>
-
-          {/* agent console HUD */}
-          <div className="absolute bottom-4 left-4 hidden max-w-[78%] rounded-2xl border border-white/10 bg-navy-950/75 p-4 font-mono text-[11px] leading-[1.7] text-white/75 shadow-2xl backdrop-blur-xl sm:block lg:bottom-5 lg:left-5">
-            <p className="text-white">
-              <span style={{ color: p.accent }}>$</span> nugraha inspect {p.slug}
-            </p>
-            <p>
-              <span className="inline-block w-14 text-white/45">role</span>
-              {p.role}
-            </p>
-            <p className="truncate">
-              <span className="inline-block w-14 text-white/45">stack</span>
-              {p.stack.slice(0, 3).join(" · ")}
-              {p.stack.length > 3 && <span className="text-white/45"> +{p.stack.length - 3}</span>}
-            </p>
-            <p>
-              <span className="inline-block w-14 text-white/45">year</span>
-              {p.year}
-              <span className="ml-1.5 inline-block h-3 w-1.5 translate-y-0.5 animate-cursor-blink bg-accent-cyan motion-reduce:animate-none" aria-hidden />
-            </p>
-          </div>
+          {/* meta overlay: role, year, top stack */}
+          <dl
+            className={clsx(
+              "absolute bottom-4 hidden max-w-[calc(100%-2rem)] grid-cols-[auto_auto_minmax(0,1fr)] gap-x-6 rounded-2xl border border-white/10 bg-navy-950/75 px-5 py-3.5 shadow-2xl backdrop-blur-xl sm:grid lg:bottom-5",
+              // opposite side from the feature-cover wordmark
+              reverse ? "left-4 lg:left-5" : "right-4 lg:right-5",
+            )}
+          >
+            <MetaItem label="Role" value={p.role} />
+            <MetaItem label="Year" value={p.year} />
+            <MetaItem
+              label="Built with"
+              value={p.stack.slice(0, 3).join(", ") + (p.stack.length > 3 ? ` +${p.stack.length - 3}` : "")}
+            />
+          </dl>
         </motion.div>
 
         {/* metric badge */}
@@ -196,12 +171,17 @@ function FlagshipRow({
         whileInView="show"
         viewport={{ once: true, amount: 0.25 }}
       >
-        <motion.div variants={textChild} className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] tracking-[0.14em] uppercase">
+        <motion.div variants={textChild} className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px] font-semibold">
           <span className="inline-flex items-center gap-2 rounded-full bg-navy-900 px-3 py-1.5 text-white">
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: p.accent, boxShadow: `0 0 10px rgba(${a},0.9)` }} aria-hidden />
-            Flagship {pad2(index + 1)}/{pad2(total)}
+            <Star
+              className="h-3.5 w-3.5"
+              style={{ color: p.accent, filter: `drop-shadow(0 0 6px rgba(${a},0.9))` }}
+              fill="currentColor"
+              aria-hidden
+            />
+            Flagship
           </span>
-          <span className="text-ink-muted">{categoryLabel(p.category)}</span>
+          <span className="font-medium text-ink-muted">{categoryLabel(p.category)}</span>
         </motion.div>
 
         <motion.h4
@@ -218,14 +198,14 @@ function FlagshipRow({
 
         <motion.dl
           variants={textChild}
-          className="mt-5 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 border-y border-primary/10 py-4 font-mono text-[12px] leading-[1.5]"
+          className="mt-5 grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 border-y border-primary/10 py-4 text-[14px] leading-[1.5]"
         >
-          <dt className="text-ink-faint">context</dt>
-          <dd className="text-ink">{p.context}</dd>
-          <dt className="text-ink-faint">role</dt>
-          <dd className="text-ink">{p.role}</dd>
-          <dt className="text-ink-faint">year</dt>
-          <dd className="text-ink">{p.year}</dd>
+          <dt className="font-medium text-ink-faint">Built for</dt>
+          <dd className="font-semibold text-ink">{p.context}</dd>
+          <dt className="font-medium text-ink-faint">Role</dt>
+          <dd className="font-semibold text-ink">{p.role}</dd>
+          <dt className="font-medium text-ink-faint">Year</dt>
+          <dd className="font-semibold text-ink">{p.year}</dd>
         </motion.dl>
 
         <motion.p variants={textChild} className="mt-5 text-[15px] leading-[1.7] text-ink-muted">
@@ -241,32 +221,41 @@ function FlagshipRow({
         </motion.div>
 
         <motion.div variants={textChild} className="mt-8 flex flex-wrap items-center gap-3">
+          {p.links?.map((l, i) => (
+            <ProjectLinkButton key={l.href} link={l} variant={i === 0 ? "primary" : "outline"} showHost={i === 0} />
+          ))}
           <button
             type="button"
             onClick={(e) => onOpen(p.slug, e.currentTarget)}
-            className="group/cta relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-primary py-3 pr-3 pl-6 text-[15px] font-semibold text-white shadow-[0_14px_30px_-12px_rgba(47,65,153,0.7)] transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-primary-hover focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none"
+            className={clsx(
+              "group/cta relative inline-flex items-center gap-3 overflow-hidden rounded-full py-3 pr-3 pl-6 text-[15px] font-semibold transition-[transform,background-color,border-color] duration-300 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:hover:translate-y-0",
+              hasLinks
+                ? "border border-primary/20 bg-white text-primary hover:border-primary hover:bg-primary-light"
+                : "bg-primary text-white shadow-[0_14px_30px_-12px_rgba(47,65,153,0.7)] hover:bg-primary-hover",
+            )}
             aria-haspopup="dialog"
           >
-            Case study
-            <span className="grid h-8 w-8 place-items-center rounded-full bg-white/15 transition-transform duration-500 group-hover/cta:rotate-90">
+            Read the case study
+            <span
+              className={clsx(
+                "grid h-8 w-8 place-items-center rounded-full transition-transform duration-500 group-hover/cta:rotate-90",
+                hasLinks ? "bg-primary-light" : "bg-white/15",
+              )}
+            >
               <Plus className="h-4 w-4" aria-hidden />
             </span>
           </button>
-          {p.links?.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group/link inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-white px-5 py-3 text-[15px] font-semibold text-primary transition-colors hover:border-primary hover:bg-primary-light focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none"
-            >
-              {l.label}
-              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" aria-hidden />
-              <span className="sr-only">(opens in a new tab)</span>
-            </a>
-          ))}
         </motion.div>
       </motion.div>
     </article>
+  );
+}
+
+function MetaItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0">
+      <dt className="text-[12px] font-medium text-white/55">{label}</dt>
+      <dd className="mt-0.5 truncate text-[13.5px] font-semibold text-white">{value}</dd>
+    </div>
   );
 }

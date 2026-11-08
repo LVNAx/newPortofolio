@@ -83,7 +83,15 @@ void main() {
 }
 `;
 
-export const skyFrag = (halos: number, vortices: number) => /* glsl */ `
+/**
+ * `bake = true`  → the expensive painterly field (vortices, warped noise, brush
+ *                  strokes, Milky Way), rendered ONCE into a cubemap.
+ * `bake = false` → per-frame shader: samples that cubemap and only adds the
+ *                  cheap animated layers (star halos + moon).
+ */
+export const skyFrag = (halos: number, vortices: number, bake = false) => /* glsl */ `
+${bake ? "#define SKY_BAKE" : ""}
+uniform samplerCube uSkyMap;
 uniform float uTime;
 uniform vec4 uHalos[${halos}];
 uniform vec4 uVortex[${vortices}];
@@ -102,7 +110,9 @@ vec3 rotAxis(vec3 v, vec3 k, float a) {
 void main() {
   vec3 dir = normalize(vDir);
   float t = uTime;
+  vec3 col;
 
+#ifdef SKY_BAKE
   // 1. Vortices twist the sampling domain -> strokes spiral around them.
   vec3 d = dir;
   float eddy = 0.0;
@@ -148,7 +158,7 @@ void main() {
   float strokeAmt = (0.22 + 0.5 * busy) * (0.6 + 0.4 * smoothstep(-0.4, 0.7, f)) + 0.35 * min(eddy, 1.0);
 
   // 4. Base canvas: deep navy, lifted where the field is high.
-  vec3 col = mix(C_NAVY950, C_NAVY900, smoothstep(-0.9, 0.5, f + dir.y * 0.25));
+  col = mix(C_NAVY950, C_NAVY900, smoothstep(-0.9, 0.5, f + dir.y * 0.25));
   col = mix(col, C_NAVY800, smoothstep(0.3, 0.95, f) * 0.5);
   col += strokeCol * stroke * strokeAmt * 0.6;
 
@@ -160,6 +170,11 @@ void main() {
   col += C_CREAM * stroke * mottled * 0.2;
   float rift = smoothstep(0.15, 0.7, snoise(q * 2.2 + 4.0)) * exp(-g * g * 140.0);
   col *= 1.0 - rift * 0.4;
+  gl_FragColor = vec4(col, 1.0);
+  return;
+#else
+  col = textureCube(uSkyMap, dir).rgb;
+#endif
 
   // 6. Luminous halos with concentric swirl rings around the brightest stars.
   for (int i = 0; i < ${halos}; i++) {

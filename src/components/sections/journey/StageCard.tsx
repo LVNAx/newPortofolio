@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 import { asset } from "@/lib/asset";
 import type { JourneyStage } from "@/data/portfolio";
 import { DotGrid, GlyphMini, QuarterCircle } from "@/components/shared/Decorators";
-import { accentFor, pad2 } from "./stage";
+import { accentFor } from "./stage";
 
 type Variant = "wide" | "stack";
 
@@ -65,13 +65,19 @@ function TileFrame({
 
         {/* caption */}
         <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 sm:p-6">
-          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/70">
-            <span className="text-accent-cyan">●</span> stage_{pad2(index + 1)}.jpg
-          </div>
-          <div aria-hidden className="font-mono text-[44px] font-bold leading-none tracking-tighter text-white/90 sm:text-[56px]">
-            {pad2(index + 1)}
-            <span className="text-[18px] font-medium text-white/50 sm:text-[20px]">/{pad2(total)}</span>
-          </div>
+          <p className="min-w-0 text-[13px] font-medium leading-snug text-white/80">
+            <span className="block text-[12px] font-semibold uppercase tracking-[0.12em] text-accent-cyan">
+              {stage.name}
+            </span>
+            <span className="block tabular-nums">{stage.period}</span>
+          </p>
+          <p aria-hidden className="shrink-0 text-[14px] font-semibold tabular-nums text-white/70">
+            Chapter{" "}
+            <span className="text-[32px] font-extrabold leading-none tracking-tight text-white sm:text-[40px]">
+              {index + 1}
+            </span>
+            <span className="text-white/50"> of {total}</span>
+          </p>
         </div>
       </div>
     </div>
@@ -134,11 +140,8 @@ export default function StageCard({
             />
           </div>
           <div className="min-w-0">
-            <p className="font-mono text-[12px] font-medium uppercase tracking-[0.2em] text-ink-faint">
-              {"// "}
-              {stage.name}
-            </p>
-            <p className="font-mono text-[15px] font-bold text-ink sm:text-[16px]">{stage.period}</p>
+            <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-ink-faint">{stage.name}</p>
+            <p className="text-[15px] font-bold tabular-nums text-ink sm:text-[16px]">{stage.period}</p>
           </div>
         </div>
 
@@ -159,12 +162,12 @@ export default function StageCard({
             <li
               key={t}
               className={cn(
-                "rounded-full px-3 py-1 font-mono text-[12px] font-medium text-ink transition-colors duration-300",
+                "rounded-full px-3 py-1 text-[13px] font-medium text-ink transition-colors duration-300",
                 a.soft,
                 "hover:bg-primary hover:text-white",
               )}
             >
-              #{t}
+              {t}
             </li>
           ))}
         </ul>
@@ -175,10 +178,7 @@ export default function StageCard({
 
         {/* milestones */}
         <div className={cn("mt-6", wide && "[@media(max-height:780px)]:mt-4")}>
-          <p className="font-mono text-[11px] font-bold uppercase tracking-[0.22em] text-primary">
-            {"> milestones"}
-            <span className="ml-2 text-ink-faint">[{stage.milestones.length}]</span>
-          </p>
+          <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-primary">Milestones</p>
           <ul className="mt-3 flex flex-col">
             {stage.milestones.map((m) => (
               <li

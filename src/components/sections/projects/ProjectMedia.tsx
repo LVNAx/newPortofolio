@@ -8,19 +8,31 @@ import { categoryTag, isPoster, objectPositionFor, rgb } from "./utils";
  * Generated cover for projects without a screenshot: navy -> accent
  * gradient, a deterministic tile composition and the title set big in
  * the display face.
+ *
+ * `feature` is the flagship treatment for projects that have no screenshot
+ * (e.g. EJA): a poster-like wordmark with the project's context line, set
+ * vertically centred on the side opposite the tile composition so the
+ * cover reads as a designed key visual rather than a placeholder.
  */
 export function GeneratedCover({
   project,
   size = "card",
   hideTitle = false,
+  feature = false,
+  align = "left",
   className,
 }: {
   project: Project;
   size?: "card" | "hero";
   /** Drop the big title (when the title is already printed next to the media). */
   hideTitle?: boolean;
+  /** Flagship key-visual layout (ignores hideTitle). */
+  feature?: boolean;
+  /** Side the feature wordmark sits on. */
+  align?: "left" | "right";
   className?: string;
 }) {
+  if (feature) return <FeatureCover project={project} align={align} className={className} />;
   const a = rgb(project.accent);
   return (
     <div
@@ -52,8 +64,8 @@ export function GeneratedCover({
       />
       {!hideTitle && (
       <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-5 sm:p-6" aria-hidden>
-        <span className="font-mono text-[10px] tracking-[0.18em] text-white/55 uppercase sm:text-[11px]">
-          {`> ${categoryTag[project.category]} · ${project.year}`}
+        <span className="text-[12px] font-medium text-white/65 sm:text-[13px]">
+          {categoryTag[project.category]} · {project.year}
         </span>
         <span
           className={clsx(
@@ -74,6 +86,75 @@ export function GeneratedCover({
   );
 }
 
+function FeatureCover({
+  project,
+  align,
+  className,
+}: {
+  project: Project;
+  align: "left" | "right";
+  className?: string;
+}) {
+  const a = rgb(project.accent);
+  const right = align === "right";
+  return (
+    <div
+      role="img"
+      aria-label={`${project.title} — ${project.tagline}`}
+      className={clsx("absolute inset-0 overflow-hidden bg-navy-900", className)}
+      style={{
+        backgroundImage: `radial-gradient(90% 80% at ${right ? "0% 100%" : "100% 100%"}, rgba(${a},0.42) 0%, rgba(${a},0.1) 40%, transparent 65%), linear-gradient(160deg, #141d48 0%, #0b102d 55%, #05081a 100%)`,
+      }}
+    >
+      {/* tile composition on the far side */}
+      <TileField
+        seed={`${project.slug}-feature`}
+        accent={project.accent}
+        cols={4}
+        rows={5}
+        density={0.78}
+        className={clsx(
+          "absolute top-[-4%] h-[108%] w-[52%]",
+          right
+            ? "left-[-6%] [mask-image:linear-gradient(90deg,#000_30%,transparent_95%)]"
+            : "right-[-6%] [mask-image:linear-gradient(270deg,#000_30%,transparent_95%)]",
+        )}
+      />
+      {/* fine grid */}
+      <div
+        aria-hidden
+        className="absolute inset-0 opacity-[0.14]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
+      {/* wordmark */}
+      <div
+        aria-hidden
+        className={clsx(
+          "absolute top-1/2 flex max-w-[60%] -translate-y-1/2 flex-col gap-3 sm:gap-4",
+          right ? "right-[7%] items-end text-right" : "left-[7%] items-start text-left",
+        )}
+      >
+        <span className="h-1.5 w-14 rounded-full" style={{ background: project.accent, boxShadow: `0 0 22px rgba(${a},0.8)` }} />
+        <span
+          className={clsx(
+            "font-sans leading-[0.9] font-extrabold tracking-tight text-white",
+            project.title.length <= 8
+              ? "text-[64px] sm:text-[104px] lg:text-[128px]"
+              : "text-[34px] sm:text-[52px] lg:text-[60px]",
+          )}
+        >
+          {project.title}
+        </span>
+        <span className="text-[13px] leading-snug font-medium text-white/70 sm:text-[15px]">{project.context}</span>
+      </div>
+    </div>
+  );
+}
+
 /** Screenshot (via asset()) when present, otherwise the generated cover. Fills its positioned parent. */
 export function ProjectMedia({
   project,
@@ -82,16 +163,30 @@ export function ProjectMedia({
   imgClassName,
   priority = false,
   hideTitle = false,
+  feature = false,
+  align = "left",
 }: {
   project: Project;
   size?: "card" | "hero";
   hideTitle?: boolean;
+  /** Use the flagship key-visual cover when there is no screenshot. */
+  feature?: boolean;
+  align?: "left" | "right";
   className?: string;
   imgClassName?: string;
   priority?: boolean;
 }) {
   if (!project.image)
-    return <GeneratedCover project={project} size={size} hideTitle={hideTitle} className={className} />;
+    return (
+      <GeneratedCover
+        project={project}
+        size={size}
+        hideTitle={hideTitle}
+        feature={feature}
+        align={align}
+        className={className}
+      />
+    );
   if (isPoster(project.slug)) {
     return (
       <div className={clsx("absolute inset-0 overflow-hidden", className)}>

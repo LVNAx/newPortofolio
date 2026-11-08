@@ -45,7 +45,6 @@ export default function CosmosCard({
   const c = centroidOf(def);
   const coords = formatRaDec(c[0], c[1], c[2]);
   const kind = KIND[a.kind];
-  const nn = String(index + 1).padStart(2, "0");
 
   return (
     <div
@@ -73,19 +72,21 @@ export default function CosmosCard({
           className="relative flex min-h-[318px] flex-col p-6 sm:p-7"
         >
           <header className="flex items-center justify-between gap-3">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55">
-              <span className="text-accent-saffron">★ {nn}</span>
-              <span className="text-white/30"> / {String(total).padStart(2, "0")} · </span>
-              {def.name}
-              {previewing && <span className="text-white/35"> · preview</span>}
+            <p className="text-[13px] font-medium text-white/60">
+              <span className="font-semibold text-accent-saffron">{def.name}</span>
+              <span className="text-white/45"> — {def.meaning}</span>
+              <span className="sr-only">
+                {`, ${index + 1} of ${total}`}
+                {previewing && ", preview"}
+              </span>
             </p>
             {origin ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-accent-saffron/50 bg-accent-saffron/15 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-accent-saffron">
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-accent-saffron/50 bg-accent-saffron/15 px-2.5 py-1 text-[12px] font-semibold text-accent-saffron">
                 <Sparkles className="size-3" aria-hidden />
                 Origin story
               </span>
             ) : (
-              <span className={`rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] ${kind.cls}`}>
+              <span className={`shrink-0 rounded-full border px-2.5 py-1 text-[12px] font-semibold ${kind.cls}`}>
                 {kind.label}
               </span>
             )}
@@ -106,7 +107,7 @@ export default function CosmosCard({
             />
           </div>
 
-          <ul className="mt-4 flex flex-wrap gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-white/70">
+          <ul className="mt-4 flex flex-wrap gap-1.5 text-[12px] font-medium text-white/75">
             <li className="rounded-full border border-white/12 bg-white/5 px-2.5 py-1">{a.level}</li>
             {a.year && <li className="rounded-full border border-white/12 bg-white/5 px-2.5 py-1">{a.year}</li>}
             <li className="rounded-full border border-white/12 bg-white/5 px-2.5 py-1">{STAGE[a.stage]}</li>
@@ -114,10 +115,8 @@ export default function CosmosCard({
 
           <p className="mt-4 text-[14.5px] leading-relaxed text-white/65">{a.note}</p>
 
-          <footer className="mt-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-white/10 pt-4 font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/45">
-            <span>
-              {def.abbr} · {def.meaning}
-            </span>
+          <footer className="mt-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-white/10 pt-4 text-[12px] font-medium text-white/45">
+            <span>{previewing ? "Previewing — click to keep it here" : `${index + 1} of ${total} in this sky`}</span>
             <span className="tabular-nums">
               RA {coords.ra} · Dec {coords.dec}
             </span>

@@ -273,7 +273,7 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
   const atlas = await buildCardAtlas(items, opts.resolve, mobile ? 0.72 : 1);
 
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
-  const dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 1.75);
+  let dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.25 : 1.5);
   renderer.setPixelRatio(dpr);
   renderer.outputColorSpace = SRGBColorSpace;
   renderer.setClearColor(NAVY_950, 1);
@@ -579,9 +579,24 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
 
   const shouldRun = () => inView && !document.hidden;
 
+  // Adaptive resolution: if frames stay slow, step the pixel ratio down.
+  let slow = 0;
+  let seen = 0;
+  const adapt = (frameMs: number) => {
+    if (++seen < 40) return;
+    slow = frameMs > 24 ? slow + 1 : Math.max(0, slow - 1);
+    if (slow > 40 && dpr > 0.85) {
+      dpr = Math.max(0.85, dpr - 0.25);
+      slow = 0;
+      renderer.setPixelRatio(dpr);
+      resize();
+    }
+  };
+
   const frame = (now: number) => {
     raf = 0;
     if (!shouldRun()) return;
+    adapt(now - last);
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
     const t = (now - t0) / 1000;
@@ -628,6 +643,7 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
 
   const kick = () => {
     if (!raf && shouldRun()) {
+      seen = 0;
       last = performance.now();
       raf = requestAnimationFrame(frame);
     }

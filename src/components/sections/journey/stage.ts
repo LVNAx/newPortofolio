@@ -37,5 +37,3 @@ export const accentFor = (i: number): StageAccent => STAGE_ACCENTS[i % STAGE_ACC
 
 /** "2019 — 2022" → "2019"; "2025 — Present" → "2025". */
 export const startYear = (s: JourneyStage) => s.period.split("—")[0].trim();
-
-export const pad2 = (n: number) => String(n).padStart(2, "0");

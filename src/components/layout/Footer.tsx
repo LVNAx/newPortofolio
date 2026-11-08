@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { ArrowUp, ArrowUpRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowUp, ArrowUpRight, Check, Copy, FileText, MapPin } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { navLinks, profile, socials } from "@/data/site";
 import SocialIcon from "@/components/shared/SocialIcons";
@@ -12,23 +12,39 @@ import "./layout.css";
 
 const STRIP_COPIES = 12; // per half (even, so both halves match) — covers 2560px+ screens
 
+const colHeading = "text-[12px] font-semibold uppercase tracking-[0.12em] text-white/45";
+const colLink =
+  "inline-flex items-center gap-2 text-[15px] font-medium text-white/70 transition-colors hover:text-white focus-visible:text-white";
+
+async function copyText(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /**
- * Dark navy-950 footer: hackvidia GeoStrip band → columns (identity, navigate,
- * elsewhere) → giant outlined "NUGRAHA" with a gradient spotlight that
- * follows the pointer → mono credits bar.
+ * Navy-950 footer: hackvidia GeoStrip band → brand block + three calm columns
+ * (Navigate, Elsewhere, Contact) → bottom bar with copyright and the
+ * "Part of Hypomonē" mark.
  */
 export default function Footer() {
-  const wordRef = useRef<HTMLDivElement>(null);
+  const [copied, setCopied] = useState(false);
+  const copyTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(copyTimer.current), []);
 
-  const onWordMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    const el = wordRef.current;
-    if (!el || e.pointerType === "touch") return;
-    const r = el.getBoundingClientRect();
-    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
-    el.style.setProperty("--my", `${e.clientY - r.top}px`);
-    el.classList.add("is-lit");
+  const onCopy = async () => {
+    const ok = await copyText(profile.email);
+    if (!ok) {
+      window.location.href = `mailto:${profile.email}`;
+      return;
+    }
+    setCopied(true);
+    window.clearTimeout(copyTimer.current);
+    copyTimer.current = window.setTimeout(() => setCopied(false), 2000);
   };
-  const onWordLeave = () => wordRef.current?.classList.remove("is-lit");
 
   const backToTop = () => {
     scrollToTarget(0);
@@ -40,13 +56,14 @@ export default function Footer() {
     }
   };
 
-  const linkSocials = socials.filter((s) => s.key !== "email");
+  const linkSocials = socials.filter((s) => s.key !== "email" && s.key !== "resume");
+  const resume = socials.find((s) => s.key === "resume");
 
   return (
     <footer data-nav-theme="dark" className="relative overflow-hidden bg-navy-950 text-white">
       {/* ---------- GeoStrip band ---------- */}
       <div aria-hidden className="relative overflow-hidden border-b border-white/[0.06] bg-navy-900">
-        <div className="nk-marquee flex w-max">
+        <div className="nk-geo-marquee flex w-max">
           {Array.from({ length: STRIP_COPIES * 2 }, (_, i) => (
             <div key={i} className={cn("w-[250px] shrink-0", i % 2 === 1 && "-scale-x-100")}>
               <GeoStrip opacity={0.95} />
@@ -55,54 +72,37 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* ---------- decor ---------- */}
+      {/* ---------- decor (kept quiet) ---------- */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-12 bottom-0 overflow-hidden">
-        <div className="absolute right-0 top-0 h-[420px] w-[620px] [mask-image:radial-gradient(ellipse_at_top_right,black,transparent_70%)]">
-          <DotGrid opacity={0.45} gap={18} radius={1.3} />
+        <div className="absolute right-0 top-0 h-[360px] w-[560px] [mask-image:radial-gradient(ellipse_at_top_right,black,transparent_70%)]">
+          <DotGrid opacity={0.3} gap={18} radius={1.2} />
         </div>
-        <QuarterCircle size={180} color="primary" rotate={90} className="absolute -right-px top-0 opacity-40" />
-        <div className="absolute -left-40 top-1/3 h-[420px] w-[420px] rounded-full bg-primary/25 blur-[120px]" />
+        <QuarterCircle size={150} color="primary" rotate={90} className="absolute -right-px top-0 opacity-25" />
+        <div className="absolute -left-40 top-1/3 h-[380px] w-[380px] rounded-full bg-primary/20 blur-[120px]" />
       </div>
 
-      {/* ---------- columns ---------- */}
-      <div className="relative mx-auto max-w-[1240px] px-4 pt-16 sm:px-6 lg:px-8 lg:pt-24">
+      {/* ---------- main ---------- */}
+      <div className="relative mx-auto max-w-[1240px] px-4 pb-14 pt-16 sm:px-6 lg:px-8 lg:pb-20 lg:pt-20">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
-          <div className="sm:col-span-2 lg:col-span-5">
-            <a href="#top" className="group inline-flex items-center gap-3" aria-label={`${profile.short} — back to top`}>
+          {/* brand */}
+          <div className="sm:col-span-2 lg:col-span-4">
+            <a href="#top" className="group inline-flex items-center gap-3" aria-label={`${profile.short}, back to top`}>
               <Monogram tone="dark" className="h-10 w-10" />
               <span className="text-[19px] font-extrabold tracking-tight">{profile.short}</span>
             </a>
-            <p className="mt-6 max-w-[34ch] text-[clamp(1.25rem,2.4vw,1.6rem)] font-bold leading-snug tracking-tight text-white">
+            <p className="mt-6 max-w-[32ch] text-[17px] font-semibold leading-snug text-white/90">
               {profile.headline}
             </p>
-            <p className="mt-4 font-mono text-[12px] leading-relaxed text-white/45">
-              {profile.campus}
-            </p>
-            <a
-              href={`mailto:${profile.email}`}
-              className="group/mail mt-8 inline-flex items-center gap-2 text-[15px] font-semibold text-white/85 transition-colors hover:text-accent-saffron"
-            >
-              {profile.email}
-              <ArrowUpRight
-                aria-hidden
-                className="h-4 w-4 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/mail:rotate-45"
-              />
-            </a>
+            <p className="mt-3 text-[14px] text-white/50">{profile.campus}</p>
           </div>
 
-          <nav aria-label="Footer" className="lg:col-span-2 lg:col-start-7">
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/40">{"// navigate"}</p>
-            <ul className="mt-5 flex flex-col gap-3">
+          {/* navigate */}
+          <nav aria-label="Footer" className="lg:col-span-2 lg:col-start-6">
+            <p className={colHeading}>Navigate</p>
+            <ul className="mt-5 grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-1">
               {navLinks.map((l) => (
                 <li key={l.href}>
-                  <a
-                    href={l.href}
-                    className="group/nl inline-flex items-center gap-2 text-[15px] font-medium text-white/70 transition-colors hover:text-white"
-                  >
-                    <span
-                      aria-hidden
-                      className="h-px w-0 bg-accent-saffron transition-[width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/nl:w-4"
-                    />
+                  <a href={l.href} className={colLink}>
                     {l.label}
                   </a>
                 </li>
@@ -110,22 +110,18 @@ export default function Footer() {
             </ul>
           </nav>
 
-          <div className="lg:col-span-3">
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/40">{"// elsewhere"}</p>
+          {/* elsewhere */}
+          <div className="lg:col-span-2">
+            <p className={colHeading}>Elsewhere</p>
             <ul className="mt-5 flex flex-col gap-3">
               {linkSocials.map((s) => (
                 <li key={s.key}>
-                  <a
-                    href={s.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group/sl inline-flex items-center gap-3 text-[15px] font-medium text-white/70 transition-colors hover:text-white"
-                  >
-                    <span className="grid h-8 w-8 place-items-center rounded-full border border-white/10 bg-white/[0.04] transition-colors group-hover/sl:border-accent-sky group-hover/sl:bg-accent-sky/20">
-                      <SocialIcon name={s.key} className="h-4 w-4" />
+                  <a href={s.href} target="_blank" rel="noopener noreferrer" className={cn(colLink, "group/sl gap-3")}>
+                    <SocialIcon name={s.key} className="h-4 w-4 shrink-0 text-white/50 transition-colors group-hover/sl:text-accent-sky" />
+                    <span className="flex flex-col leading-tight">
+                      {s.label}
+                      <span className="mt-0.5 text-[12.5px] font-normal text-white/40">{s.handle}</span>
                     </span>
-                    {s.label}
-                    <span className="font-mono text-[12px] text-white/35">{s.handle}</span>
                     <span className="sr-only">(opens in a new tab)</span>
                   </a>
                 </li>
@@ -133,48 +129,81 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div className="flex items-start sm:col-span-2 lg:col-span-1 lg:col-start-12 lg:justify-end">
-            <button
-              type="button"
-              onClick={backToTop}
-              data-cursor-label="Top"
-              aria-label="Back to top"
-              className="group/top grid h-14 w-14 place-items-center rounded-full border border-white/15 bg-white/[0.04] text-white backdrop-blur-xl transition-[background-color,border-color,color] duration-300 hover:border-accent-saffron hover:bg-accent-saffron hover:text-navy-950"
-            >
-              <ArrowUp
-                aria-hidden
-                className="h-5 w-5 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/top:-translate-y-1"
-              />
-            </button>
+          {/* contact */}
+          <div className="sm:col-span-2 lg:col-span-3 lg:col-start-10">
+            <p className={colHeading}>Contact</p>
+            <ul className="mt-5 flex flex-col gap-4">
+              <li className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <a
+                  href={`mailto:${profile.email}`}
+                  className="group/mail inline-flex items-center gap-1.5 break-all text-[15px] font-semibold text-white transition-colors hover:text-accent-saffron"
+                >
+                  {profile.email}
+                  <ArrowUpRight
+                    aria-hidden
+                    className="h-4 w-4 shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/mail:rotate-45"
+                  />
+                </a>
+                <button
+                  type="button"
+                  onClick={onCopy}
+                  className={cn(
+                    "inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-[12px] font-medium transition-colors",
+                    copied
+                      ? "border-state-success/40 bg-state-success/15 text-white"
+                      : "border-white/15 text-white/60 hover:border-white/30 hover:text-white",
+                  )}
+                >
+                  {copied ? <Check aria-hidden className="h-3.5 w-3.5" /> : <Copy aria-hidden className="h-3.5 w-3.5" />}
+                  {copied ? "Copied" : "Copy"}
+                </button>
+                <span role="status" aria-live="polite" className="sr-only">
+                  {copied ? "Email address copied to clipboard" : ""}
+                </span>
+              </li>
+              <li className="flex items-start gap-2 text-[14px] leading-relaxed text-white/55">
+                <MapPin aria-hidden className="mt-[3px] h-4 w-4 shrink-0 text-white/40" />
+                {profile.location}
+              </li>
+              {resume && (
+                <li>
+                  <a href={resume.href} target="_blank" rel="noopener noreferrer" className={cn(colLink, "group/cv")}>
+                    <FileText aria-hidden className="h-4 w-4 shrink-0 text-white/50 transition-colors group-hover/cv:text-accent-sky" />
+                    Resume
+                    <span className="text-[12.5px] font-normal text-white/40">{resume.handle}</span>
+                    <span className="sr-only">(opens in a new tab)</span>
+                  </a>
+                </li>
+              )}
+            </ul>
           </div>
         </div>
       </div>
 
-      {/* ---------- giant wordmark ---------- */}
-      <div
-        ref={wordRef}
-        aria-hidden
-        onPointerMove={onWordMove}
-        onPointerLeave={onWordLeave}
-        className="nk-word-wrap relative mt-16 select-none overflow-hidden px-2 lg:mt-24"
-      >
-        <div className="grid place-items-center">
-          <p className="nk-word-outline col-start-1 row-start-1 whitespace-nowrap text-[clamp(3rem,13.6vw,15.5rem)] font-extrabold leading-[0.82] tracking-[-0.055em]">
-            NUGRAHA
-          </p>
-          <p className="nk-word-fill col-start-1 row-start-1 whitespace-nowrap bg-linear-to-r from-accent-sky via-accent-cyan to-accent-saffron bg-clip-text text-[clamp(3rem,13.6vw,15.5rem)] font-extrabold leading-[0.82] tracking-[-0.055em] text-transparent">
-            NUGRAHA
-          </p>
-        </div>
-      </div>
-
-      {/* ---------- credits ---------- */}
-      <div className="relative border-t border-white/[0.06]">
-        <div className="mx-auto flex max-w-[1240px] flex-col gap-3 px-4 py-6 font-mono text-[11.5px] text-white/45 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <p>Designed &amp; built by Nugraha · Next.js · three.js · GSAP</p>
-          <p className="flex items-center gap-2">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent-saffron" aria-hidden />© 2026 {profile.short}
-          </p>
+      {/* ---------- bottom bar ---------- */}
+      <div className="relative border-t border-white/[0.08]">
+        <div className="mx-auto flex max-w-[1240px] flex-col gap-4 px-4 py-6 text-[13px] text-white/50 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <p>© 2026 {profile.short}. All rights reserved.</p>
+          <div className="flex items-center justify-between gap-6 sm:justify-end">
+            <p className="inline-flex items-center gap-2 font-medium text-white/65">
+              <Monogram tone="dark" className="h-4 w-4" />
+              Part of Hypomonē
+            </p>
+            <button
+              type="button"
+              onClick={backToTop}
+              data-cursor-label="Top"
+              className="group/top inline-flex h-9 items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] pl-3.5 pr-1.5 text-[13px] font-medium text-white/80 transition-[background-color,border-color,color] duration-300 hover:border-accent-saffron hover:bg-accent-saffron hover:text-navy-950"
+            >
+              Back to top
+              <span className="grid h-6 w-6 place-items-center rounded-full bg-white/10 transition-colors group-hover/top:bg-navy-950/10">
+                <ArrowUp
+                  aria-hidden
+                  className="h-3.5 w-3.5 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/top:-translate-y-0.5"
+                />
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     </footer>

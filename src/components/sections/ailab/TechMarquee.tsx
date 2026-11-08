@@ -32,7 +32,7 @@ function Row({
   duration: string;
 }) {
   const chip = clsx(
-    "inline-flex shrink-0 items-center whitespace-nowrap rounded-full border px-4 py-1.5 font-mono text-[12px] font-medium tracking-wide sm:px-5 sm:py-2 sm:text-[13px]",
+    "inline-flex shrink-0 items-center whitespace-nowrap rounded-full border px-4 py-1.5 text-[12px] font-medium sm:px-5 sm:py-2 sm:text-[13px]",
     tone === "light"
       ? "border-navy-900/15 bg-white/25 text-navy-950"
       : "border-white/15 bg-white/[0.04] text-white/80",

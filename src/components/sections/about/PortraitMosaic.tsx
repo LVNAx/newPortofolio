@@ -1,15 +1,14 @@
 "use client";
 
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
-import { Sparkles } from "lucide-react";
 import { useRef } from "react";
 import { profile } from "@/data/site";
-import { achievements } from "@/data/portfolio";
+import { journey } from "@/data/portfolio";
 import { asset } from "@/lib/asset";
 
 /**
  * Portrait framed by a hackvidia-style tile mosaic.
- * Three depth layers (back tiles, photo, front tiles + chips) drift at
+ * Three depth layers (back tiles, photo, front tiles + campus chip) drift at
  * different speeds while the block scrolls through the viewport.
  * Geometry lives in a 100×100 viewBox so the whole puzzle scales fluidly.
  */
@@ -24,7 +23,7 @@ export default function PortraitMosaic() {
   const photoY = useTransform(p, [0, 1], [10, -10]);
   const spin = useTransform(p, [0, 1], [-40, 40]);
 
-  const osn = achievements.find((a) => a.kind === "olympiad" && a.event.includes("Astronomy"));
+  const uiLogo = journey.find((s) => s.name === "University")?.logo;
 
   return (
     <div ref={ref} className="group/portrait relative mx-auto aspect-square w-full max-w-[540px]">
@@ -104,32 +103,28 @@ export default function PortraitMosaic() {
         </svg>
       </motion.div>
 
-      {/* ---------- chips ---------- */}
+      {/* ---------- campus chip ---------- */}
       <motion.div className="absolute bottom-[12%] left-[2%] sm:left-[-2%]" style={reduce ? undefined : { y: chipY }}>
-        <div className="flex items-center gap-2.5 rounded-2xl border border-white/60 bg-white/85 px-3.5 py-2.5 shadow-[0_18px_40px_-18px_rgba(11,16,45,0.45)] backdrop-blur-md">
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-state-success/60 motion-reduce:animate-none" />
-            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-state-success" />
-          </span>
-          <span className="font-mono text-[11px] leading-tight text-ink sm:text-[12px]">
-            <span className="text-ink-faint">cs</span>@universitas-indonesia
+        <div className="flex items-center gap-3 rounded-2xl border border-white/60 bg-white/90 py-2 pl-2 pr-4 shadow-[0_18px_40px_-18px_rgba(11,16,45,0.45)] backdrop-blur-md">
+          {uiLogo ? (
+            // eslint-disable-next-line @next/next/no-img-element -- static export
+            <img
+              src={asset(uiLogo)}
+              alt=""
+              width={32}
+              height={32}
+              loading="lazy"
+              className="h-8 w-8 shrink-0 rounded-lg bg-white object-contain p-0.5"
+            />
+          ) : (
+            <span aria-hidden className="h-8 w-8 shrink-0 rounded-tl-full bg-primary" />
+          )}
+          <span className="leading-tight">
+            <span className="block text-[12px] font-semibold text-ink sm:text-[13px]">Computer Science</span>
+            <span className="block text-[11.5px] text-ink-muted sm:text-[12px]">Universitas Indonesia</span>
           </span>
         </div>
       </motion.div>
-
-      {osn && (
-        <motion.div className="absolute right-[2%] top-[18%] sm:right-[-3%]" style={reduce ? undefined : { y: chipY }}>
-          <div className="flex max-w-[210px] items-start gap-2.5 rounded-2xl bg-navy-900 px-3.5 py-3 text-white shadow-[0_18px_40px_-18px_rgba(11,16,45,0.7)]">
-            <Sparkles aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-accent-saffron" />
-            <span className="leading-tight">
-              <span className="block font-mono text-[10px] uppercase tracking-[0.14em] text-accent-saffron">
-                {osn.title} · OSN
-              </span>
-              <span className="mt-1 block text-[12px] text-white/75">Astronomy, {osn.level.split(" · ")[0].toLowerCase()}</span>
-            </span>
-          </div>
-        </motion.div>
-      )}
     </div>
   );
 }

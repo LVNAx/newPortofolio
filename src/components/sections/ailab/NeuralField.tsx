@@ -46,8 +46,8 @@ export default function NeuralField({ className, style }: { className?: string; 
       const rect = canvas.getBoundingClientRect();
       w = rect.width;
       h = rect.height;
-      const mobile = w < 768;
-      const dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 2);
+      // Tiny soft dots: 1x is visually identical and up to 4x cheaper on a section-tall canvas.
+      const dpr = 1;
       canvas.width = Math.max(1, Math.round(w * dpr));
       canvas.height = Math.max(1, Math.round(h * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -95,10 +95,17 @@ export default function NeuralField({ className, style }: { className?: string; 
       }
     };
 
+    let odd = false;
     const step = () => {
+      // ~30fps is plenty for slow drifting particles.
+      odd = !odd;
+      if (odd) {
+        raf = requestAnimationFrame(step);
+        return;
+      }
       for (const p of pts) {
-        p.x += p.vx;
-        p.y += p.vy;
+        p.x += p.vx * 2;
+        p.y += p.vy * 2;
         if (p.x < -10) p.x = w + 10;
         else if (p.x > w + 10) p.x = -10;
         if (p.y < -10) p.y = h + 10;

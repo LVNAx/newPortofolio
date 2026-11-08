@@ -41,7 +41,7 @@ export const projects: Project[] = [
     slug: "waskita",
     title: "WASKITA",
     tagline: "An AI agent that runs a small factory's electricity bill for it.",
-    context: "UNS Innovation Hackathon 2026 · Energy track",
+    context: "UNS Innovation Hackathon 2026 · Energy track · our latest competition build",
     year: "2026",
     role: "AI & Backend Engineer",
     category: "agents",
@@ -57,8 +57,31 @@ export const projects: Project[] = [
     ],
     metric: { value: "96", label: "15-min slots optimised daily" },
     stack: ["Python", "FastAPI", "Stable-Baselines3", "OR-Tools", "Gymnasium", "SQLAlchemy", "Next.js", "ESP32", "WhatsApp API"],
-    image: "/images/projects/waskita.png",
+    image: "/images/projects/waskita.jpg",
     accent: "#f5c04a",
+    links: [{ label: "Live", href: "https://waskita-webapp.vercel.app/" }],
+  },
+  {
+    slug: "eja",
+    title: "EJA",
+    tagline: "Game-based dyslexia screening and learning for Indonesian kids — 1st place at JOINTS UGM.",
+    context: "JOINTS UGM 2026 Hackathon · 1st place",
+    year: "2026",
+    role: "Full-Stack Engineer",
+    category: "web",
+    featured: true,
+    description:
+      "Learning ecosystem for elementary-age children with dyslexia: playful screening activities (sounds, reading, rapid naming, dictation), plain-language guidance for parents with AI-generated explanations, and a dashboard to follow progress.",
+    highlights: [
+      "1st place — JOINTS UGM 2026 Hackathon",
+      "Four-activity screening flow run together with a companion, framed as a screening aid — never a diagnosis",
+      "AI-written explanations of companion advice via Groq",
+      "Supabase with row-level security and a vitest test suite",
+    ],
+    metric: { value: "1st", label: "JOINTS UGM 2026" },
+    stack: ["Next.js", "TypeScript", "Supabase", "Groq", "Tailwind CSS", "Vitest"],
+    accent: "#f5c04a",
+    links: [{ label: "GitHub", href: "https://github.com/LVNAx/EJA" }],
   },
   {
     slug: "foundros",
@@ -68,7 +91,6 @@ export const projects: Project[] = [
     year: "2026",
     role: "AI Agent Implementer",
     category: "agents",
-    featured: true,
     description:
       "Autonomous multi-agent system that runs day-to-day operations for MSMEs and startups. Each agent owns a job — sourcing vendors, watching stock, paying suppliers — and executes it end to end through a Telegram interface.",
     highlights: [
@@ -112,7 +134,7 @@ export const projects: Project[] = [
     slug: "logika-default-risk",
     title: "12-Month Default Risk",
     tagline: "Ranking 30,000 loan applicants by who will hit 90 days past due.",
-    context: "LOGIKA UI 2026 · Data Science Competition",
+    context: "LOGIKA UI 2026 · Data Science Competition · Top 10",
     year: "2026",
     role: "Data Scientist",
     category: "ml",
@@ -123,8 +145,9 @@ export const projects: Project[] = [
       "LightGBM, TabPFN stacking and RealMLP / TabM neural models in the ensemble",
       "Promotion rule: a new submission only ships when it beats the reference with z > 2",
       "Best public-leaderboard KS of 0.571",
+      "Finished in the top 10 of the final leaderboard as team Hypomonē",
     ],
-    metric: { value: "0.571", label: "public KS" },
+    metric: { value: "Top 10", label: "LOGIKA UI 2026" },
     stack: ["Python", "LightGBM", "TabPFN", "PyTorch", "pandas", "Kaggle"],
     accent: "#d64c6f",
   },
@@ -147,25 +170,6 @@ export const projects: Project[] = [
     stack: ["Python", "pandas", "scikit-learn", "Time Series"],
     image: "/images/projects/ispu.png",
     accent: "#9cb3d3",
-  },
-  {
-    slug: "eja",
-    title: "EJA",
-    tagline: "Game-based dyslexia screening and learning for Indonesian kids.",
-    context: "JOINTS UGM 2026",
-    year: "2026",
-    role: "Full-Stack Engineer",
-    category: "web",
-    description:
-      "Learning ecosystem for elementary-age children with dyslexia: playful screening activities (sounds, reading, rapid naming, dictation), plain-language guidance for parents with AI-generated explanations, and a dashboard to follow progress.",
-    highlights: [
-      "Four-activity screening flow run together with a companion, framed as a screening aid — never a diagnosis",
-      "AI-written explanations of companion advice via Groq",
-      "Supabase with row-level security and a vitest test suite",
-    ],
-    stack: ["Next.js", "TypeScript", "Supabase", "Groq", "Tailwind CSS", "Vitest"],
-    accent: "#f5c04a",
-    links: [{ label: "GitHub", href: "https://github.com/LVNAx/EJA" }],
   },
   {
     slug: "mbgmeter",
@@ -204,9 +208,12 @@ export const projects: Project[] = [
       "Scheduled email digests with Resend; hand-written service-worker PWA",
     ],
     stack: ["Next.js", "three.js", "GSAP", "Supabase", "Tesseract.js", "Claude API", "Resend"],
-    image: "/images/projects/sandbox.jpg",
+    image: "/images/projects/hypomone-lv.jpg",
     accent: "#d64c6f",
-    links: [{ label: "Sandbox (v1)", href: "https://lvnasandbox.vercel.app" }],
+    links: [
+      { label: "Live", href: "https://hypomoneatlv.vercel.app/" },
+      { label: "Sandbox (v1)", href: "https://lvnasandbox.vercel.app" },
+    ],
   },
   {
     slug: "bem-ui",
@@ -224,7 +231,9 @@ export const projects: Project[] = [
       "Data from the internal CMS (SIT) API with static JSON fallback",
     ],
     stack: ["Next.js", "three.js", "GSAP", "Lenis", "OGL", "Tailwind CSS", "Railway"],
+    image: "/images/projects/bemui.jpg",
     accent: "#475ca3",
+    links: [{ label: "Live", href: "https://bemui.site" }],
   },
   {
     slug: "hypomone-hack",
@@ -263,6 +272,16 @@ export type Achievement = {
 
 export const achievements: Achievement[] = [
   {
+    title: "1st Place",
+    event: "JOINTS UGM Hackathon",
+    level: "National",
+    year: "2026",
+    stage: "University",
+    kind: "ai",
+    constellation: "Aquila",
+    note: "EJA — game-based dyslexia screening and learning for Indonesian kids, with AI-written guidance for parents.",
+  },
+  {
     title: "3rd Place",
     event: "National Science Olympiad (OSN) — Astronomy",
     level: "Provincial · West Kalimantan",
@@ -280,6 +299,16 @@ export const achievements: Achievement[] = [
     kind: "ai",
     constellation: "Crux",
     note: "National AI hackathon — top 10 teams.",
+  },
+  {
+    title: "Top 10",
+    event: "LOGIKA UI · Data Science Competition",
+    level: "National",
+    year: "2026",
+    stage: "University",
+    kind: "data",
+    constellation: "Gemini",
+    note: "12-month default-risk model over six relational tables, as team Hypomonē.",
   },
   {
     title: "Top 70",
@@ -434,7 +463,7 @@ export const journey: JourneyStage[] = [
     tags: ["exploratory", "collaborative", "data-driven"],
     story:
       "The chapter where it gets serious: hackathons, data competitions, teaching and shipping products used by real people.",
-    milestones: ["Top 10 — ASN Digital AI Hackathon 2025", "Top 38 — Datavidia 2026", "Top 58 — Datathon 2026"],
+    milestones: ["1st — JOINTS UGM Hackathon 2026", "Top 10 — LOGIKA UI 2026", "Top 10 — ASN Digital AI Hackathon 2025"],
   },
 ];
 
@@ -474,7 +503,7 @@ export const techMarquee = [
 
 export const stats = [
   { value: 10, suffix: "+", label: "projects shipped" },
-  { value: 7, suffix: "", label: "competition podiums & top ranks" },
-  { value: 4, suffix: "", label: "national AI & data competitions" },
+  { value: 10, suffix: "", label: "competition podiums & top ranks" },
+  { value: 6, suffix: "", label: "national AI, data & hackathon placements" },
   { value: 99.57, suffix: "", decimals: 2, label: "best test F1 (vision)" },
 ];

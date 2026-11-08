@@ -1,15 +1,15 @@
 "use client";
 
 import clsx from "clsx";
-import { ArrowLeft, ArrowRight, ArrowUpRight, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { Project } from "@/data/portfolio";
 import { CardDeco } from "@/components/shared/Decorators";
 import { ProjectMedia } from "./ProjectMedia";
-import { CategoryChip, HighlightList, MetricBadge, StackChips } from "./parts";
-import { categoryLabel, getLenis, pad2, rgb, useHydrated } from "./utils";
+import { CategoryChip, HighlightList, MetricBadge, ProjectLinkButton, StackChips } from "./parts";
+import { categoryLabel, getLenis, rgb, useHydrated } from "./utils";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -215,8 +215,8 @@ function ModalShell({
               </div>
 
               <div className="relative px-5 pt-8 pb-10 sm:px-10 sm:pt-10">
-                <p className="font-mono text-[11px] tracking-[0.16em] text-ink-muted uppercase">
-                  {"// case study"} · {pad2(idx + 1)}/{pad2(list.length)}
+                <p className="text-[13px] font-medium text-ink-muted">
+                  Case study · {idx + 1} of {list.length}
                 </p>
                 <h2
                   id={titleId}
@@ -228,6 +228,14 @@ function ModalShell({
                   {p.tagline}
                 </p>
 
+                {p.links && p.links.length > 0 && (
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    {p.links.map((l, i) => (
+                      <ProjectLinkButton key={l.href} link={l} variant={i === 0 ? "primary" : "outline"} showHost />
+                    ))}
+                  </div>
+                )}
+
                 {p.metric && (
                   <div className="mt-5 flex sm:hidden">
                     <MetricBadge metric={p.metric} accent={p.accent} size="md" />
@@ -236,10 +244,10 @@ function ModalShell({
 
                 <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
                   <div>
-                    <SectionLabel>overview</SectionLabel>
+                    <SectionLabel>Overview</SectionLabel>
                     <p className="mt-3 text-[15.5px] leading-[1.75] text-ink-muted">{p.description}</p>
 
-                    <SectionLabel className="mt-9">highlights</SectionLabel>
+                    <SectionLabel className="mt-9">Highlights</SectionLabel>
                     <HighlightList items={p.highlights} accent={p.accent} className="mt-4" itemClassName="text-[15px]" />
                   </div>
 
@@ -252,34 +260,30 @@ function ModalShell({
                         style={{ background: p.accent, boxShadow: `0 4px 14px rgba(${a},0.6)` }}
                       />
                       <dl className="flex flex-col gap-4">
-                        <Meta label="context" value={p.context} />
-                        <Meta label="role" value={p.role} />
+                        <Meta label="Built for" value={p.context} />
+                        <Meta label="Role" value={p.role} />
                         <div className="grid grid-cols-2 gap-4">
-                          <Meta label="year" value={p.year} />
-                          <Meta label="track" value={categoryLabel(p.category)} />
+                          <Meta label="Year" value={p.year} />
+                          <Meta label="Track" value={categoryLabel(p.category)} />
                         </div>
-                        {p.metric && <Meta label="metric" value={`${p.metric.value} — ${p.metric.label}`} />}
+                        {p.metric && <Meta label="Key result" value={`${p.metric.value} — ${p.metric.label}`} />}
                       </dl>
 
-                      <SectionLabel className="mt-6">stack</SectionLabel>
+                      <SectionLabel className="mt-6">Stack</SectionLabel>
                       <StackChips stack={p.stack} className="mt-3" />
 
                       {p.links && p.links.length > 0 && (
                         <>
-                          <SectionLabel className="mt-6">links</SectionLabel>
+                          <SectionLabel className="mt-6">Links</SectionLabel>
                           <ul className="mt-3 flex flex-col gap-2">
-                            {p.links.map((l) => (
+                            {p.links.map((l, i) => (
                               <li key={l.href}>
-                                <a
-                                  href={l.href}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="group/l flex items-center justify-between rounded-xl bg-primary px-4 py-3 text-[14.5px] font-semibold text-white transition-colors hover:bg-primary-hover focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none"
-                                >
-                                  {l.label}
-                                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover/l:translate-x-0.5 group-hover/l:-translate-y-0.5" aria-hidden />
-                                  <span className="sr-only">(opens in a new tab)</span>
-                                </a>
+                                <ProjectLinkButton
+                                  link={l}
+                                  variant={i === 0 ? "dark" : "outline"}
+                                  showHost
+                                  className="w-full rounded-xl"
+                                />
                               </li>
                             ))}
                           </ul>
@@ -308,17 +312,14 @@ function ModalShell({
 
 function SectionLabel({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <p className={clsx("font-mono text-[11px] tracking-[0.16em] text-primary uppercase", className)}>
-      {"// "}
-      {children}
-    </p>
+    <p className={clsx("text-[12px] font-bold tracking-[0.12em] text-primary uppercase", className)}>{children}</p>
   );
 }
 
 function Meta({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="font-mono text-[10.5px] tracking-[0.14em] text-ink-faint uppercase">{label}</dt>
+      <dt className="text-[12.5px] font-medium text-ink-faint">{label}</dt>
       <dd className="mt-1 text-[14.5px] leading-[1.45] font-semibold text-ink">{value}</dd>
     </div>
   );
@@ -349,7 +350,7 @@ function NavButton({
         </span>
       )}
       <span className="flex min-w-0 flex-col">
-        <span className="font-mono text-[10.5px] tracking-[0.14em] text-ink-faint uppercase">
+        <span className="text-[12px] font-medium text-ink-faint">
           {isPrev ? "Previous" : "Next"}
         </span>
         <span className="truncate text-[14px] font-bold text-ink sm:text-[15px]">{project.title}</span>
